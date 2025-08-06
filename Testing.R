@@ -4,11 +4,12 @@ library(gtools)
 source("R/faces.R")
 source("R/Betti.R")
 source("R/Boundary.R")
-source("R/EulerCharacteristic")
+source("R/EulerCharacteristic.R")
 source("R/AbstractSimplicialComplex.R")
 
-simplices <- list(c(2, 1, 3), c(4, 2), c(5), c(2, 3, 5, 4))
-
+# simplices <- list(c(2, 1, 3), c(4, 2), c(5), c(2, 3, 5, 4))
+simplices <- list(c(1,2,3), c(1,2), c(2,3), c(1,3), c(1), c(2), c(3))
+# simplices <- list(c(0,1), c(1,2), c(2,0))
 
 faces(simplices, target_dim=0)
 faces(simplices, target_dim=1)
