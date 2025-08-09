@@ -3,13 +3,12 @@ library(shiny)
 library(gtools)
 library(igraph)
 
-source("R/faces.R")
-source("R/Betti.R")
-source("R/Boundary.R")
-source("R/EulerCharacteristic.R")
-source("R/AbstractSimplicialComplex.R")
-
-source("R/VRcomplex.R")
+source("./R/Faces.R")
+source("./R/Betti.R")
+source("./R/Boundary.R")
+source("./R/EulerCharacteristic.R")
+source("./R/AbstractSimplicialComplex.R")
+source("./R/VRComplex.R")
 
 parse_points <- function(txt) {
   lines <- strsplit(txt, "\n")[[1]]

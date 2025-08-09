@@ -1,11 +1,11 @@
 library(Matrix)
 library(gtools)
 
-source("R/faces.R")
-source("R/Betti.R")
-source("R/Boundary.R")
-source("R/EulerCharacteristic.R")
-source("R/AbstractSimplicialComplex.R")
+source("./R/Faces.R")
+source("./R/Betti.R")
+source("./R/Boundary.R")
+source("./R/EulerCharacteristic.R")
+source("./R/AbstractSimplicialComplex.R")
 
 simplices <- list(c(1, 2), c(3, 4), c(2, 1, 3), c(4, 2))
 
