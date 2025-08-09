@@ -7,13 +7,14 @@ Maintainer: ChiChien Wang <kennywang2003@gmail.com>
 Description: This is a simplicial complex from implementation for reader to better understand the output of what the function actually do in TDA.
 Imports:
   Matrix,
-  gtools
+  gtools,
+  igraph
 License: MIT + file LICENSE
 URL: https://github.com/kennywang112/SimplicialComplex/
 BugReports: https://github.com/kennywang112/SimplicialComplex/issues
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

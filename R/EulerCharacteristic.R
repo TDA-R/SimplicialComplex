@@ -3,7 +3,7 @@
 #' This function computes the Euler characteristic of a simplicial complex based on the alternating sum of Betti numbers.
 #'
 #' @param simplices A list of simplices (each a numeric vector).
-#' @param eps Optional numerical tolerance to pass to \code{rankMatrix()}.
+#' @param tol Optional numerical tolerance to pass to \code{rankMatrix()}.
 #'
 #' @return An integer representing the Euler characteristic \eqn{\chi}.
 #'
@@ -20,20 +20,16 @@
 #'   \item \eqn{\chi < 0}: Surfaces with multiple handles or genus
 #' }
 #'
-#' @examples
-#' simplices <- list(c(1,2,3), c(2,3,4), c(5))
-#' euler_characteristic(simplices, eps = 1e-3)
-#'
 #' @seealso \code{\link{betti_number}}
 #' @export
 euler_characteristic <- function(
-    simplices, eps
+    simplices, tol
 ) {
   max_dim <- max(sapply(simplices, length))
   print(max_dim)
   #　χ = Σ (-1)^k * β_k
   euler_char <- sum(sapply(0:(max_dim), function(bound_dim) {
-    (-1)^bound_dim * betti_number(simplices, bound_dim, eps)
+    (-1)^bound_dim * betti_number(simplices, bound_dim, tol)
   }))
 
   print(paste('Euler Characteristic', euler_char, sep = ': '))

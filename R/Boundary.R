@@ -67,7 +67,7 @@ boundary <- function(
 
         # Fill boundary matrix
         if (!is.na(i) && !is.na(j)) {
-          Sparse[i, j] <- ifelse(face %% 2 == 1, -1, 1)
+          Sparse[i, j] <- ifelse(face %% 2 == 0, -1, 1)
         }
       }
 

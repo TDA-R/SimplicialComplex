@@ -2,13 +2,13 @@
 #'
 #' @param simplices A list of simplices (each a numeric vector).
 #' @param dimension Optional max dimension to compute up to.
-#' @param eps Optional numerical tolerance to pass to \code{rankMatrix()}.
+#' @param tol Optional numerical tolerance to pass to \code{rankMatrix()}.
 #'
 #' @return The Euler characteristic \eqn{\chi}.
 #'
 #' @export
 abstract_simplicial_complex <- function(
-    simplices, dimension, eps=NULL
+    simplices, dimension, tol=NULL
 ) {
 
   # check
@@ -23,5 +23,5 @@ abstract_simplicial_complex <- function(
   simplices <- lapply(simplices, function(simplex) sort(simplex))
 
   # betti numbers
-  euler_characteristic(simplices, eps)
+  euler_characteristic(simplices, tol)
 }

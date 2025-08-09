@@ -4,12 +4,12 @@
 \alias{euler_characteristic}
 \title{Compute the Euler characteristic \eqn{\chi} of a simplicial complex}
 \usage{
-euler_characteristic(simplices, eps)
+euler_characteristic(simplices, tol)
 }
 \arguments{
 \item{simplices}{A list of simplices (each a numeric vector).}
 
-\item{eps}{Optional numerical tolerance to pass to \code{rankMatrix()}.}
+\item{tol}{Optional numerical tolerance to pass to \code{rankMatrix()}.}
 }
 \value{
 An integer representing the Euler characteristic \eqn{\chi}.
@@ -29,11 +29,6 @@ Interpretation of values:
   \item \eqn{\chi = 0}: Torus-like or circle-like spaces
   \item \eqn{\chi < 0}: Surfaces with multiple handles or genus
 }
-}
-\examples{
-simplices <- list(c(1,2,3), c(2,3,4), c(5))
-euler_characteristic(simplices, eps = 1e-3)
-
 }
 \seealso{
 \code{\link{betti_number}}

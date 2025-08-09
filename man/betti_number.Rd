@@ -4,12 +4,14 @@
 \alias{betti_number}
 \title{Safely compute the rank of a sparse matrix}
 \usage{
-betti_number(simplices, bound_dim, eps = NULL)
+betti_number(simplices, bound_dim, tol = NULL)
 }
 \arguments{
-\item{eps}{Optional numerical tolerance to pass to \code{rankMatrix()}.}
+\item{simplices}{A list of simplices representing the simplicial complex.}
 
-\item{mat}{A matrix (usually sparse) whose rank is to be computed.}
+\item{bound_dim}{The dimension of the boundary to compute the Betti number for.}
+
+\item{tol}{Optional numerical tolerance to pass to \code{rankMatrix()}.}
 }
 \value{
 An integer representing the rank of the matrix.
