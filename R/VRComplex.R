@@ -33,7 +33,7 @@ VietorisRipsComplex <- function(
   for (i in 1:(length(labels) - 1)) {
     for (j in (i + 1):length(labels)) {
       dist <- sqrt(sum((points[i, ] - points[j, ])^2))
-      if (dist < epsilon) {
+      if (dist <= epsilon) {
         # Add edge
         network <- add_edges(network, c(i, j))
       }

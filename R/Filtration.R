@@ -40,7 +40,12 @@ build_vr_filtration <- function(
   F <- F[ord]
 }
 
-points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
+# 15 points
+points <- matrix(c(
+  0,0, 1,0, 0,1, 1,1,
+  0.5,0.5, 0.5,1.5, 1.5,0.5, 1.5,1.5,
+  3,3, 4,3, 3,4, 4,4
+), ncol=2, byrow=TRUE)
 
 F <- build_vr_filtration(points, eps_max=1.2)
 
