@@ -1,5 +1,6 @@
 library(Matrix)
 library(gtools)
+library(igraph)
 
 source("./R/Faces.R")
 source("./R/Betti.R")

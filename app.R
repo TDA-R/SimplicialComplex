@@ -54,14 +54,15 @@ ui <- fluidPage(
       tags$hr(),
       numericInput("dim", "Target Dimension k", value = 0, min = 0, max = 10),
       numericInput("tol", "tolerance (for Betti & Euler)", value = 0.1, step = 0.05),
-      actionButton("compute", "Compute", class = "btn-primary", width = "100%")
+      actionButton("compute", "Compute", class = "btn-primary", width = "100%"),
+      width = 3
     ),
 
     mainPanel(
       conditionalPanel(
         condition = "input.mode == 'pts'",
         h4("Plot"),
-        plotOutput("vr_plot", height = "300px"),
+        plotOutput("vr_plot"),
         tags$hr()
       ),
       tabsetPanel(
@@ -78,9 +79,9 @@ ui <- fluidPage(
                  withMathJax(
                    HTML("$$\\partial_k \\sigma = \\sum_i (-1)^i [v_0\\ v_1\\ \\ldots\\ \\hat{v}_i\\ \\ldots\\ v_k]$$ <br/>
                         Boundary function returns a matrix, the shape is the dimension of the faces and it's lower one.
-                        For example, if you compute 1-dimensional boundary with the data above, you'll get a 4 (lower dimensional face)
+                        Given example, if you compute 1-dimensional boundary with the data above, you'll get a 4 (lower dimensional face)
                         x 5 (dimensiional face) matrix. <br/>
-                        Noew you get [1,2,3,4] and [(1,2), (3,4), (1,3), (2,3), (2,4)], which you can then get whether there's a
+                        Now you get [1,2,3,4] and [(1,2), (3,4), (1,3), (2,3), (2,4)], which you can then get whether there's a
                         pair for 1 or -1 by using the formula above, or just empty.
                         In detail, the formula will be $${(-1)^1[1, (1,2)], (-1)^2[2, (1,2)], (-1)^3[3, (3,4)], (-1)^4[4, (3,4)],
                         (-1)^5[1, (1,3)], (-1)^6[3, (1,3)], (-1)^7[2, (2,3)], (-1)^8[3, (2,3)], (-1)^9[2, (2,4)], (-1)^10[4, (2,4)]}$$")
@@ -130,7 +131,8 @@ ui <- fluidPage(
                  ),
                  verbatimTextOutput("abstract_out")
         )
-      )
+      ),
+      width = 9
     )
   )
 )
@@ -197,13 +199,18 @@ server <- function(
     vr  <- VietorisRipsComplex(pts, input$epsilon_pts)
     g <- vr$network
     req(!is.null(g))
+    xr <- range(pts[,1]); yr <- range(pts[,2])
+    par(xpd = NA)
     plot(
       g,
       layout = as.matrix(pts),
       vertex.label = 1:nrow(pts),
       vertex.size = 12,
       edge.arrow.mode = 0,
-      asp = 1
+      rescale = FALSE,
+      xlim = xr,
+      ylim = c(yr[1] - pad_y, yr[2] + pad_y),
+      asp = 0,
     )
   })
 }
