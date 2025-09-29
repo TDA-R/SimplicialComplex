@@ -1,6 +1,7 @@
 library(Matrix)
 library(gtools)
 library(igraph)
+library(ggplot2)
 
 source("./R/Faces.R")
 source("./R/Betti.R")
@@ -29,16 +30,14 @@ euler_characteristic(simplices, tol=0.1)
 abstract_simplicial_complex(simplices, 2)
 
 source("R/VRComplex.R")
-
 points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
 epsilon <- 1.5
 
 vr_complex <- VietorisRipsComplex(points, epsilon)
-
+#
 # E(vr_complex$network)
 # vr_complex$simplices
 
-# Topological Structure
 faces(vr_complex$simplices, target_dim=2)
 boundary(vr_complex$simplices, 2)
 betti_number(vr_complex$simplices, 1, tol=0.1)
@@ -51,3 +50,14 @@ plot(
   edge.arrow.mode = 0,
   asp = 1
 )
+
+source("R/Filtration.R")
+F <- build_vr_filtration(points, eps_max=1.2)
+
+source("R/Persistence.R")
+res <- boundary_info(F)
+pairs <- extract_persistence_pairs(F, res$last_1, res$pivot_owner)
+
+source("R/PlotPD.R")
+plot_persistence(pairs)
+

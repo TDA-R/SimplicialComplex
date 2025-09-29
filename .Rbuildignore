@@ -3,3 +3,7 @@
 ^LICENSE\.md$
 ^CRAN-SUBMISSION$
 ^cran-comments\.md$
+
+Testing.R
+app.R
+rsconnect

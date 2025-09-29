@@ -48,6 +48,5 @@ VietorisRipsComplex <- function(
   for (simplex in simplices) {
     print(paste("Simplex:", paste(simplex, collapse = ":")))
   }
-  # List of network and simplices
   return(list(network = network, simplices = simplices))
 }

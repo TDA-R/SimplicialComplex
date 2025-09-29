@@ -1,11 +1,12 @@
-library(igraph)
-
-source('./R/VRComplex.R')
-source('./R/Faces.R')
-
-vr_scale_of_simplex <- function(
-    points, simplex_idx
-    ) {
+#' Distance scale of a simplex
+#'
+#' Get the boundary matrix and its reduction information in matrix form
+#'
+#' @param points Data point input
+#' @param simplex_idx Index of points in the simplex
+#'
+#' @export
+vr_scale_of_simplex <- function(points, simplex_idx) {
   # Get the maximum distance between points in the simplex
   if (length(simplex_idx) <= 1) return(0)
   # Get specific rows
@@ -22,9 +23,15 @@ vr_scale_of_simplex <- function(
   dmax
 }
 
-build_vr_filtration <- function(
-    points, eps_max
-    ) {
+#' Vietoris-Rips Filtration
+#'
+#' Get the boundary matrix and its reduction information in matrix form
+#'
+#' @param points Data point input
+#' @param eps_max Maximum scale (epsilon)
+#'
+#' @export
+build_vr_filtration <- function(points, eps_max) {
   vr <- VietorisRipsComplex(points, epsilon = eps_max)
   kmax <- max(sapply(vr$simplices, length)) - 1 # Dim of each simplices
   face <- lapply(0:kmax, function(k) faces(vr$simplices, k))
@@ -39,15 +46,6 @@ build_vr_filtration <- function(
                sapply(F, function(x) paste(x$simplex, collapse="-")))
   F <- F[ord]
 }
-
-# 15 points
-points <- matrix(c(
-  0,0, 1,0, 0,1, 1,1,
-  0.5,0.5, 0.5,1.5, 1.5,0.5, 1.5,1.5,
-  3,3, 4,3, 3,4, 4,4
-), ncol=2, byrow=TRUE)
-
-F <- build_vr_filtration(points, eps_max=1.2)
 
 
 

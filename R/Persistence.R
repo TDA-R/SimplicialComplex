@@ -1,13 +1,10 @@
-library(Matrix)
-
-source('./R/Filtration.R')
-
-points <- as.matrix(iris[1:5, 1:2])
-F <- build_vr_filtration(points, eps_max=0.5)
-
-persistent_pairs_for_dim <- function(
-    F, k
-    ) {
+#' Get the boundary matrix and its reduction information in matrix form
+#'
+#' @param F Filtration list, each element includes simplex and time
+#'
+#' @importFrom utils combn tail
+#' @export
+boundary_info <- function(F) {
 
   boundary <- matrix(nrow = length(F), ncol = length(F), data = 0)
   name_vec = list()
@@ -77,8 +74,59 @@ persistent_pairs_for_dim <- function(
 
 }
 
-H0 <- persistent_pairs_for_dim(F, k = 0)
+#' This function extracts the persistence from combining the
+#' boundary matrix and its filtration
+#'
+#' @param F Filtration list, each element includes simplex and time
+#' @param last_1 The last 1 row index for each column in boundary matrix
+#' @param pivot_owner The column index owning the pivot row
+#'
+#' @export
+extract_persistence_pairs <- function(F, last_1, pivot_owner) {
+  pairs <- list()
+  for (row in seq_along(pivot_owner)) {
+    col <- pivot_owner[row]
+    if (!is.na(col)) {
+      # row: the simplex being killed, col: the simplex killing it
+      birth_simplex <- F[[row]]
+      death_simplex <- F[[col]]
 
-last_1 <- H0$last_1
-boundary <- H0$boundary
-pivot_owner <- H0$pivot_owner
+      birth_time <- birth_simplex$t
+      death_time <- death_simplex$t
+      # the dimension of simplex that is killed
+      dim <- length(birth_simplex$simplex) - 1
+
+      pairs[[length(pairs)+1]] <- list(
+        dim = dim,
+        birth = birth_time,
+        death = death_time,
+        birth_simplex = birth_simplex$simplex,
+        death_simplex = death_simplex$simplex
+      )
+    }
+  }
+  # not been killed (Inf)
+  for (i in seq_along(F)) {
+    if (!(i %in% pivot_owner) && !all(is.na(F[[i]]$simplex))) {
+      birth_time <- F[[i]]$t
+      dim <- length(F[[i]]$simplex) - 1
+      pairs[[length(pairs)+1]] <- list(
+        dim = dim,
+        birth = birth_time,
+        death = Inf,
+        birth_simplex = F[[i]]$simplex,
+        death_simplex = NA
+      )
+    }
+  }
+
+  df <- data.frame(
+    dim = sapply(pairs, function(x) x$dim),
+    birth = sapply(pairs, function(x) x$birth),
+    death = sapply(pairs, function(x) x$death)
+  )
+  df
+}
+
+
+

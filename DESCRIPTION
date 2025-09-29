@@ -8,7 +8,8 @@ Description: This is a simplicial complex from implementation for reader to bett
 Imports:
   Matrix,
   gtools,
-  igraph
+  igraph,
+  ggplot2
 License: MIT + file LICENSE
 URL: https://github.com/kennywang112/SimplicialComplex/
 BugReports: https://github.com/kennywang112/SimplicialComplex/issues

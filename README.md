@@ -3,7 +3,7 @@ This package aims to provide a user-friendly TDA application. Although many TDA 
 
 ## Goals
 1. This package will continue adding useful knowledge in the playground to help both me and the users understand the methods.
-2. Since this package computes simplicial complexes, more applications for example, persistence diagrams, are expected in future versions.
+2. Since this package computes simplicial complexes, more applications are expected in future versions.
 
 **Example code**
 ```R
@@ -29,8 +29,17 @@ plot(
   asp = 1
 )
 
+# Filtration, Boundary reduction, and Persistence informations
+F <- build_vr_filtration(points, eps_max=1.2)
+res <- boundary_info(F)
+pairs <- extract_persistence_pairs(F, res$last_1, res$pivot_owner)
+plot_persistence(pairs)
 ```
 
 **Playground**<br/>
-Try this [playground](https://tf3q5u-0-0.shinyapps.io/mapperalgo/) to get familier with all of the concept that will be used in TDA.<br/>
+Try this [playground](https://tf3q5u-0-0.shinyapps.io/simplicialcomplex/) to get familier with all of the concept that will be used in TDA.<br/>
 ![App](man/figures/App.png)
+
+## Reference
+- Zomorodian, A., & Carlsson, G. (2004, June). Computing persistent homology. In Proceedings of the twentieth annual symposium on Computational geometry (pp. 347-356).
+- Chazal, F., & Michel, B. (2021). An introduction to topological data analysis: fundamental and practical aspects for data scientists. Frontiers in artificial intelligence, 4, 667963.
