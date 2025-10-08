@@ -26,3 +26,7 @@ For example, a 2-simplex \code{c(1, 2, 3)} has three 1-dimensional faces (edges)
 \code{c(1,2)}, \code{c(1,3)}, and \code{c(2,3)}, and three 0-dimensional faces (vertices):
 \code{1}, \code{2}, and \code{3}.
 }
+\examples{
+simplices <- list(c(1, 2), c(3, 4), c(2, 1, 3), c(4, 2))
+faces(simplices, target_dim=0)
+}

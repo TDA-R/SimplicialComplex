@@ -14,3 +14,7 @@ build_vr_filtration(points, eps_max)
 \description{
 Get the boundary matrix and its reduction information in matrix form
 }
+\examples{
+points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
+filtration <- build_vr_filtration(points, eps_max=1.2)
+}

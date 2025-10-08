@@ -21,6 +21,10 @@
 #'
 #' @importFrom igraph graph.empty add_edges max_cliques
 #' @export
+#' @examples
+#' points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
+#' epsilon <- 1.5
+#' vr_complex <- VietorisRipsComplex(points, epsilon)
 VietorisRipsComplex <- function(
     points, epsilon
     ) {
@@ -45,8 +49,6 @@ VietorisRipsComplex <- function(
     simplex <- sort(clique)
     return(as.vector(simplex))
   })
-  for (simplex in simplices) {
-    print(paste("Simplex:", paste(simplex, collapse = ":")))
-  }
+
   return(list(network = network, simplices = simplices))
 }

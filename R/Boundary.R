@@ -13,6 +13,9 @@
 #' @importFrom Matrix sparseMatrix Matrix
 #' @importFrom stats setNames
 #' @export
+#' @examples
+#' simplices <- list(c(1, 2), c(3, 4), c(2, 1, 3), c(4, 2))
+#' boundary(simplices, 0)
 boundary <- function(
     simplices, bound_dim
 ) {

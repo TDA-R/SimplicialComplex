@@ -30,6 +30,10 @@ Interpretation of values:
   \item \eqn{\chi < 0}: Surfaces with multiple handles or genus
 }
 }
+\examples{
+simplices <- list(c(1, 2), c(3, 4), c(2, 1, 3), c(4, 2))
+euler_characteristic(simplices, tol=0.1)
+}
 \seealso{
 \code{\link{betti_number}}
 }

@@ -19,4 +19,8 @@ An integer representing the rank of the matrix.
 \description{
 This helper function wraps \code{Matrix::rankMatrix()} to safely handle empty matrices (i.e., with 0 rows or columns).
 }
+\examples{
+simplices <- list(c(1, 2), c(3, 4), c(2, 1, 3), c(4, 2))
+betti_number(simplices, 0, tol=0.1)
+}
 \keyword{internal}

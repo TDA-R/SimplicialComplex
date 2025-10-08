@@ -12,3 +12,10 @@ plot_persistence(df)
 \description{
 Plot Persistence Diagram
 }
+\examples{
+points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
+filtration <- build_vr_filtration(points, eps_max=1.2)
+res <- boundary_info(filtration)
+pairs <- extract_persistence_pairs(filtration, res$last_1, res$pivot_owner)
+plot_persistence(pairs)
+}

@@ -19,3 +19,7 @@ The Euler characteristic \eqn{\chi}.
 \description{
 Compute Euler characteristic for an abstract simplicial complex
 }
+\examples{
+simplices <- list(c(1, 2), c(3, 4), c(2, 1, 3), c(4, 2))
+abstract_simplicial_complex(simplices, 2)
+}

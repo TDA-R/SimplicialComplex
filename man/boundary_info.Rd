@@ -4,11 +4,16 @@
 \alias{boundary_info}
 \title{Get the boundary matrix and its reduction information in matrix form}
 \usage{
-boundary_info(F)
+boundary_info(filist)
 }
 \arguments{
-\item{F}{Filtration list, each element includes simplex and time}
+\item{filist}{Filtration list, each element includes simplex and time}
 }
 \description{
 Get the boundary matrix and its reduction information in matrix form
+}
+\examples{
+points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
+filtration <- build_vr_filtration(points, eps_max=1.2)
+res <- boundary_info(filtration)
 }

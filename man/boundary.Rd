@@ -20,3 +20,7 @@ This function returns the sparse matrix representation of the boundary operator 
 \details{
 \deqn{\partial_k \sigma = \sum_i (-1)^i [v_0 v_1 \ldots \hat{v}_i \ldots v_k]}
 }
+\examples{
+simplices <- list(c(1, 2), c(3, 4), c(2, 1, 3), c(4, 2))
+boundary(simplices, 0)
+}

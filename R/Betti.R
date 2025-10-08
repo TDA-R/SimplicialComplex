@@ -10,6 +10,11 @@
 #'
 #' @keywords internal
 #' @importFrom Matrix rankMatrix
+#'
+#' @export
+#' @examples
+#' simplices <- list(c(1, 2), c(3, 4), c(2, 1, 3), c(4, 2))
+#' betti_number(simplices, 0, tol=0.1)
 betti_number <- function(
     simplices, bound_dim, tol = NULL
 ) {
@@ -30,10 +35,10 @@ betti_number <- function(
   # Compute Betti number: \beta_k = dim(C_k) - rank(\partial_k) - rank(\partial_{k+1})
   betti_num <- as.numeric(ncol(partial_i) - partial_i_rank - partial_i1_rank)
 
-  print(paste("Betti", bound_dim, "=", betti_num, sep = ""))
   return(betti_num)
 }
 
+#' @keywords internal
 safe_rank <- function(mat, tol = NULL) {
   if (prod(dim(mat)) == 0) {
     return(0)

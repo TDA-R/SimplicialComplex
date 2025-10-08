@@ -22,6 +22,9 @@
 #'
 #' @seealso \code{\link{betti_number}}
 #' @export
+#' @examples
+#' simplices <- list(c(1, 2), c(3, 4), c(2, 1, 3), c(4, 2))
+#' euler_characteristic(simplices, tol=0.1)
 euler_characteristic <- function(
     simplices, tol
 ) {
@@ -31,8 +34,6 @@ euler_characteristic <- function(
   euler_char <- sum(sapply(0:(max_dim), function(bound_dim) {
     (-1)^bound_dim * betti_number(simplices, bound_dim, tol)
   }))
-
-  print(paste('Euler Characteristic', euler_char, sep = ': '))
 
   return(euler_char)
 }

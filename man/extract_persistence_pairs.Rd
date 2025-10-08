@@ -5,10 +5,10 @@
 \title{This function extracts the persistence from combining the
 boundary matrix and its filtration}
 \usage{
-extract_persistence_pairs(F, last_1, pivot_owner)
+extract_persistence_pairs(filist, last_1, pivot_owner)
 }
 \arguments{
-\item{F}{Filtration list, each element includes simplex and time}
+\item{filist}{Filtration list, each element includes simplex and time}
 
 \item{last_1}{The last 1 row index for each column in boundary matrix}
 
@@ -17,4 +17,10 @@ extract_persistence_pairs(F, last_1, pivot_owner)
 \description{
 This function extracts the persistence from combining the
 boundary matrix and its filtration
+}
+\examples{
+points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
+filtration <- build_vr_filtration(points, eps_max=1.2)
+res <- boundary_info(filtration)
+pairs <- extract_persistence_pairs(filtration, res$last_1, res$pivot_owner)
 }

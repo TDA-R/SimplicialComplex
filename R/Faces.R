@@ -18,6 +18,9 @@
 #'
 #' @importFrom gtools combinations
 #' @export
+#' @examples
+#' simplices <- list(c(1, 2), c(3, 4), c(2, 1, 3), c(4, 2))
+#' faces(simplices, target_dim=0)
 faces <- function(
     simplices, target_dim
 ) {

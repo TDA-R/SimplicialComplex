@@ -29,3 +29,8 @@ finite set of points with pairwise distances < \eqn{\epsilon}. This function
 constructs the 1-skeleton (edges only) and then uses maximal cliques in that
 graph as the maximal simplices.
 }
+\examples{
+points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
+epsilon <- 1.5
+vr_complex <- VietorisRipsComplex(points, epsilon)
+}
