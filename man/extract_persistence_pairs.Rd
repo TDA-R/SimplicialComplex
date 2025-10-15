@@ -14,6 +14,9 @@ extract_persistence_pairs(filist, last_1, pivot_owner)
 
 \item{pivot_owner}{The column index owning the pivot row}
 }
+\value{
+A data frame with columns: dimension, birth, and death
+}
 \description{
 This function extracts the persistence from combining the
 boundary matrix and its filtration

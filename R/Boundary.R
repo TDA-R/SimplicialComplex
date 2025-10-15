@@ -1,10 +1,7 @@
 #' Compute the boundary operator for a simplicial complex
 #'
-#' This function returns the sparse matrix representation of the boundary operator \eqn{\partial_{k}}.
-#'
 #' @param simplices A list of simplices (each a numeric vector).
 #' @param bound_dim The dimension k of the boundary operator \eqn{\partial_{k}}.
-#'
 #' @return A sparse matrix representing \eqn{\partial_{k}}.
 #'
 #' @details

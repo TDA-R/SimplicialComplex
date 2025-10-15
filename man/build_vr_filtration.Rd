@@ -11,6 +11,9 @@ build_vr_filtration(points, eps_max)
 
 \item{eps_max}{Maximum scale (epsilon)}
 }
+\value{
+A list of simplices with their information
+}
 \description{
 Get the boundary matrix and its reduction information in matrix form
 }

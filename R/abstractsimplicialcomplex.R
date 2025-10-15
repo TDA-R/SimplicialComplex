@@ -3,7 +3,6 @@
 #' @param simplices A list of simplices (each a numeric vector).
 #' @param dimension Optional max dimension to compute up to.
 #' @param tol Optional numerical tolerance to pass to \code{rankMatrix()}.
-#'
 #' @return The Euler characteristic \eqn{\chi}.
 #'
 #' @export

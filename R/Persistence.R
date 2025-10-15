@@ -1,6 +1,7 @@
 #' Get the boundary matrix and its reduction information in matrix form
 #'
-#' @param filist Filtration list, each element includes simplex and time
+#' @param filist Filtration list, each element includes simplex and time.
+#' @return A list containing the boundary matrix, the last boundary row, and the pivot owner for persistence extraction.
 #'
 #' @importFrom utils combn tail
 #' @export
@@ -78,14 +79,12 @@ boundary_info <- function(filist) {
 
 }
 
-#' This function extracts the persistence from combining the
-#' boundary matrix and its filtration
+#' This function extracts the persistence from combining the boundary matrix and its filtration
 #'
-#' @param filist Filtration list, each element includes simplex and time
-#' @param last_1 The last 1 row index for each column in boundary matrix
-#' @param pivot_owner The column index owning the pivot row
-#'
-#' @return A data frame with columns: dimension, birth, and death
+#' @param filist Filtration list, each element includes simplex and time.
+#' @param last_1 The last 1 row index for each column in boundary matrix.
+#' @param pivot_owner The column index owning the pivot row.
+#' @return A data frame with columns: dimension, birth, and death.
 #'
 #' @export
 #' @examples

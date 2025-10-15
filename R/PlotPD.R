@@ -1,8 +1,7 @@
 #' Plot Persistence Diagram
 #'
-#' @param df Dataframe from plot_persistence
-#'
-#' @return A ggplot2 object representing the persistence diagram
+#' @param df Dataframe from plot_persistence.
+#' @return A ggplot2 object representing the persistence diagram.
 #'
 #' @importFrom ggplot2 ggplot aes geom_point geom_abline theme_minimal labs scale_x_continuous scale_y_continuous coord_fixed theme
 #' @export

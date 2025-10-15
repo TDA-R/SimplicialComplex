@@ -5,7 +5,6 @@
 #' @param simplices A list of simplices representing the simplicial complex.
 #' @param bound_dim The dimension of the boundary to compute the Betti number for.
 #' @param tol Optional numerical tolerance to pass to \code{rankMatrix()}.
-#'
 #' @return An integer representing the rank of the matrix.
 #'
 #' @keywords internal

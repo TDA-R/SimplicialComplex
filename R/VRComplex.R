@@ -1,12 +1,7 @@
 #' Construct a Vietoris–Rips Complex (1-skeleton + maximal simplices)
 #'
-#' Builds the 1-skeleton graph by connecting pairs of points whose Euclidean
-#' distance is strictly less than \eqn{\epsilon}, then extracts maximal cliques
-#' as maximal simplices.
-#'
 #' @param points A numeric matrix or data.frame with one point per row (columns are coordinates).
 #' @param epsilon A positive numeric threshold; connect points with distance < \eqn{\epsilon}.
-#'
 #' @return A list with:
 #' \describe{
 #'   \item{network}{An \code{igraph} object representing the 1-skeleton.}
@@ -44,7 +39,6 @@ VietorisRipsComplex <- function(
     }
   }
   cliques <- max_cliques(network)
-  print(cliques)
   simplices <- lapply(cliques, function(clique) {
     simplex <- sort(clique)
     return(as.vector(simplex))

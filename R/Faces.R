@@ -1,11 +1,7 @@
 #' Generate all unique faces of a given dimension from simplices
 #'
-#' This function computes all unique \eqn{k}-faces (subsets of vertices) from the input simplices
-#' and returns only those of the specified dimension.
-#'
 #' @param simplices A list of simplices (each a numeric vector).
 #' @param target_dim The target dimension \eqn{k} for the faces (e.g., \code{0} for vertices, \code{1} for edges, etc.).
-#'
 #' @return A list of faces (each a numeric vector) of dimension \code{target_dim}.
 #'
 #' @details

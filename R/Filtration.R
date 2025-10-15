@@ -1,11 +1,8 @@
-#' Vietoris-Rips Filtration
+#' Vietoris-Rips Filtration: Get the boundary matrix and its reduction information in matrix form
 #'
-#' Get the boundary matrix and its reduction information in matrix form
-#'
-#' @param points Data point input
-#' @param eps_max Maximum scale (epsilon)
-#'
-#' @return A list of simplices with their information
+#' @param points Data point input.
+#' @param eps_max Maximum scale (epsilon).
+#' @return A list of simplices with their information.
 #'
 #' @export
 #' @examples

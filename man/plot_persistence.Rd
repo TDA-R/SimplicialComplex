@@ -9,6 +9,9 @@ plot_persistence(df)
 \arguments{
 \item{df}{Dataframe from plot_persistence}
 }
+\value{
+A ggplot2 object representing the persistence diagram
+}
 \description{
 Plot Persistence Diagram
 }
