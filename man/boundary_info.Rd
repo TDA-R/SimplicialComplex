@@ -7,7 +7,10 @@
 boundary_info(filist)
 }
 \arguments{
-\item{filist}{Filtration list, each element includes simplex and time}
+\item{filist}{Filtration list, each element includes simplex and time.}
+}
+\value{
+A list containing the boundary matrix, the last boundary row, and the pivot owner for persistence extraction.
 }
 \description{
 Get the boundary matrix and its reduction information in matrix form

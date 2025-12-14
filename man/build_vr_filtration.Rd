@@ -2,20 +2,20 @@
 % Please edit documentation in R/Filtration.R
 \name{build_vr_filtration}
 \alias{build_vr_filtration}
-\title{Vietoris-Rips Filtration}
+\title{Vietoris-Rips Filtration: Get the boundary matrix and its reduction information in matrix form}
 \usage{
 build_vr_filtration(points, eps_max)
 }
 \arguments{
-\item{points}{Data point input}
+\item{points}{Data point input.}
 
-\item{eps_max}{Maximum scale (epsilon)}
+\item{eps_max}{Maximum scale (epsilon).}
 }
 \value{
-A list of simplices with their information
+A list of simplices with their information.
 }
 \description{
-Get the boundary matrix and its reduction information in matrix form
+Vietoris-Rips Filtration: Get the boundary matrix and its reduction information in matrix form
 }
 \examples{
 points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)

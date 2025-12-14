@@ -15,7 +15,7 @@ boundary(simplices, bound_dim)
 A sparse matrix representing \eqn{\partial_{k}}.
 }
 \description{
-This function returns the sparse matrix representation of the boundary operator \eqn{\partial_{k}}.
+Compute the boundary operator for a simplicial complex
 }
 \details{
 \deqn{\partial_k \sigma = \sum_i (-1)^i [v_0 v_1 \ldots \hat{v}_i \ldots v_k]}

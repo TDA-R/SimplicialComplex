@@ -17,8 +17,6 @@ boundary <- function(
     simplices, bound_dim
 ) {
   simplices_dim <- faces(simplices, target_dim=bound_dim)
-  simplices_lower_dim <- faces(simplices, target_dim=(bound_dim-1))
-
 
   # No simplices at all in this dimension, return 0x0 matrix
   if (length(simplices_dim) == 0) {
@@ -27,7 +25,7 @@ boundary <- function(
   }
 
   # No lower-dimensional simplices, return identity matrix
-  if (length(simplices_lower_dim) == 0) {
+  if (bound_dim == 0) {
     n <- length(simplices_dim)
     message(sprintf("No %d-dimensional lower simplices, returning identity matrix.", bound_dim - 1))
     i <- rep(1, n) # row
@@ -37,6 +35,7 @@ boundary <- function(
 
   }
   else {
+    simplices_lower_dim <- faces(simplices, target_dim = (bound_dim - 1))
 
     # add index to simplices
     keys_dim <- sapply(simplices_dim, function(x) paste(sort(x), collapse= "-"))
@@ -53,16 +52,14 @@ boundary <- function(
     )
 
     for (simplex_dim in simplices_dim) {
-      j_key <- paste(simplex_dim, collapse = "-")
-      j <- dct_dim[[j_key]]
+      j_key <- paste(sort(simplex_dim), collapse = "-")
+      j <- dct_dim[j_key]
 
       i_entries <- list()
-
       for (face in seq_along(simplex_dim)) {
-
         simplex_lower <- simplex_dim[-face]
-        i_key <- paste(simplex_lower, collapse = "-")
-        i <- dct_lower_dim[[i_key]]
+        i_key <- paste(sort(simplex_lower), collapse = "-")
+        i <- dct_lower_dim[i_key]
         i_entries[[length(i_entries) + 1]] <- list(i = i, key = i_key)
 
         # Fill boundary matrix

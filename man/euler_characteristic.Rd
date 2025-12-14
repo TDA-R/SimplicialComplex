@@ -15,7 +15,7 @@ euler_characteristic(simplices, tol)
 An integer representing the Euler characteristic \eqn{\chi}.
 }
 \description{
-This function computes the Euler characteristic of a simplicial complex based on the alternating sum of Betti numbers.
+Compute the Euler characteristic \eqn{\chi} of a simplicial complex
 }
 \details{
 The Euler characteristic is computed as:

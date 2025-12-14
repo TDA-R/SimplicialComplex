@@ -20,28 +20,30 @@
 faces <- function(
     simplices, target_dim
 ) {
+
   faceset <- list()
   facestr_set <- character()
 
+  target_len <- target_dim + 1
+
   for (simplex in simplices) {
+
     node_counts <- length(simplex)
 
-    for (r in node_counts:1) {
-      combs <- combinations(n = node_counts, r = r, v = simplex)
+    if (node_counts < target_len) {next}
 
-      for (i in 1:nrow(combs)) {
-        face <- sort(combs[i, ])
-        face_str <- paste(face, collapse = "-")
+    combs <- combinations(n = node_counts, r = target_len, v = simplex)
 
-        if (!(face_str %in% facestr_set)) {
-          faceset[[length(faceset) + 1]] <- face
-          facestr_set <- c(facestr_set, face_str)
-        }
+    for (i in 1:nrow(combs)) {
+      face <- sort(combs[i, ])
+      face_str <- paste(face, collapse = "-")
+
+      if (!(face_str %in% facestr_set)) {
+        faceset[[length(faceset) + 1]] <- face
+        facestr_set <- c(facestr_set, face_str)
       }
     }
   }
 
-  faces_in_dim <- Filter(function(face) length(face) == target_dim + 1, faceset)
-
-  return(faces_in_dim)
+  return(faceset)
 }

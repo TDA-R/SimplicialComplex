@@ -19,9 +19,7 @@ A list with:
 }
 }
 \description{
-Builds the 1-skeleton graph by connecting pairs of points whose Euclidean
-distance is strictly less than \eqn{\epsilon}, then extracts maximal cliques
-as maximal simplices.
+Construct a Vietoris–Rips Complex (1-skeleton + maximal simplices)
 }
 \details{
 The Vietoris–Rips complex at scale \eqn{\epsilon} includes a simplex for every

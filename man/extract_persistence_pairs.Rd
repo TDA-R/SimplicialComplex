@@ -2,24 +2,22 @@
 % Please edit documentation in R/Persistence.R
 \name{extract_persistence_pairs}
 \alias{extract_persistence_pairs}
-\title{This function extracts the persistence from combining the
-boundary matrix and its filtration}
+\title{This function extracts the persistence from combining the boundary matrix and its filtration}
 \usage{
 extract_persistence_pairs(filist, last_1, pivot_owner)
 }
 \arguments{
-\item{filist}{Filtration list, each element includes simplex and time}
+\item{filist}{Filtration list, each element includes simplex and time.}
 
-\item{last_1}{The last 1 row index for each column in boundary matrix}
+\item{last_1}{The last 1 row index for each column in boundary matrix.}
 
-\item{pivot_owner}{The column index owning the pivot row}
+\item{pivot_owner}{The column index owning the pivot row.}
 }
 \value{
-A data frame with columns: dimension, birth, and death
+A data frame with columns: dimension, birth, and death.
 }
 \description{
-This function extracts the persistence from combining the
-boundary matrix and its filtration
+This function extracts the persistence from combining the boundary matrix and its filtration
 }
 \examples{
 points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)

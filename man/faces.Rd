@@ -15,8 +15,7 @@ faces(simplices, target_dim)
 A list of faces (each a numeric vector) of dimension \code{target_dim}.
 }
 \description{
-This function computes all unique \eqn{k}-faces (subsets of vertices) from the input simplices
-and returns only those of the specified dimension.
+Generate all unique faces of a given dimension from simplices
 }
 \details{
 The function generates all possible subsets (combinations) of each simplex, removes duplicates,
