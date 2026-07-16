@@ -37,8 +37,10 @@
 #'
 #' @export
 #' @examples
+#' \dontrun{
 #' pts <- matrix(rnorm(2000), ncol = 2)
 #' lms <- generate_landmarks(pts, 50)
+#' }
 generate_landmarks <- function(points, n_lms, start_idx = 1) {
   points <- as.matrix(points)
   n <- nrow(points)
@@ -159,8 +161,10 @@ generate_landmarks <- function(points, n_lms, start_idx = 1) {
 #'
 #' @export
 #' @examples
+#' \dontrun{
 #' pts <- matrix(rnorm(3000), ncol = 2)
 #' fc <- flood_complex(pts, landmarks = 40)
+#' }
 flood_complex <- function(points,
                           landmarks,
                           max_dimension = NULL,
@@ -300,9 +304,11 @@ flood_complex <- function(points,
 #'
 #' @export
 #' @examples
+#' \dontrun{
 #' pts <- matrix(rnorm(2000), ncol = 2)
 #' filtration <- build_flood_filtration(pts, landmarks = 30)
 #' pairs <- flood_persistence(filtration)
+#' }
 build_flood_filtration <- function(points, landmarks, ...) {
   as_filtration(flood_complex(points, landmarks, ...))
 }

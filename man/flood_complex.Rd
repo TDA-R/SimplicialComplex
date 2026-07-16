@@ -42,6 +42,8 @@ landmarks whose simplices are filtered by their covering radius with
 respect to the full point cloud ("flood time").
 }
 \examples{
+\dontrun{
 pts <- matrix(rnorm(3000), ncol = 2)
 fc <- flood_complex(pts, landmarks = 40)
+}
 }

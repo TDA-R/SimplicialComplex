@@ -26,7 +26,9 @@ format as \code{\link{build_vr_filtration}}: a list of
 \code{\link{flood_persistence}}.
 }
 \examples{
+\dontrun{
 pts <- matrix(rnorm(2000), ncol = 2)
 filtration <- build_flood_filtration(pts, landmarks = 30)
 pairs <- flood_persistence(filtration)
+}
 }

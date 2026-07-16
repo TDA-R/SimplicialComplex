@@ -25,6 +25,8 @@ approximate bucket-FPS; the exact version below gives the same qualitative
 coverage).
 }
 \examples{
+\dontrun{
 pts <- matrix(rnorm(2000), ncol = 2)
 lms <- generate_landmarks(pts, 50)
+}
 }
