@@ -9,7 +9,7 @@ extract_persistence_pairs(filist, last_1, pivot_owner)
 \arguments{
 \item{filist}{Filtration list, each element includes simplex and time.}
 
-\item{last_1}{The last 1 row index for each column in boundary matrix.}
+\item{last_1}{The last 1 row index for each column in boundary matrix (after reduction).}
 
 \item{pivot_owner}{The column index owning the pivot row.}
 }

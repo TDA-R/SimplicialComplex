@@ -1,48 +1,24 @@
 # Topological Data Analysis: Simplicial Complex
 
-[![CRAN status](https://www.r-pkg.org/badges/version/SimplicialComplex)](https://cran.r-project.org/package=SimplicialComplex) <a href="https://CRAN.R-project.org/package=SimplicialComplex" target="_blank" rel="noreferrer"> <img src="https://cranlogs.r-pkg.org/badges/grand-total/SimplicialComplex" alt="mysql" width="100" height="20"/> </a>
+[![CRAN status](https://www.r-pkg.org/badges/version/SimplicialComplex)](https://cran.r-project.org/package=SimplicialComplex) <a href="https://CRAN.R-project.org/package=SimplicialComplex" target="_blank" rel="noreferrer"> <img src="https://cranlogs.r-pkg.org/badges/grand-total/SimplicialComplex" alt="CRAN downloads" width="100" height="20"/> </a>
 
-This package aims to provide a user-friendly TDA application. Although many TDA libraries, such as Dionysus, PHAT, and GUDHI, have been developed in Python and C++, I believe it would be valuable to implement simplicial complex functionality in R, making it compatible with the wide range of statistical methods available in R.
+`SimplicialComplex` is a user-friendly Topological Data Analysis (TDA) package written entirely in R. While most TDA libraries (Dionysus, PHAT, GUDHI) are developed in Python and C++, implementing simplicial complexes natively in R makes them directly compatible with the rich ecosystem of statistical methods R already offers.
 
-## Goals
-1. This package will continue adding useful knowledge in the playground to help both me and the users understand the methods.
-2. Since this package computes simplicial complexes, more applications are expected in future versions.
+## Features
 
-**Example code**
-```R
-# Get its' simplices by specific epsilon
-points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
-epsilon <- 1.5
-vr_complex <- VietorisRipsComplex(points, epsilon)
+- **Simplicial complexes** — build Vietoris–Rips complexes from point clouds, or define abstract simplicial complexes by hand.
+- **Topological invariants** — faces, boundary matrices, Betti numbers, and the Euler characteristic.
+- **Persistent homology** — filtrations, boundary-matrix reduction, persistence pairs, and persistence diagrams. Full worked examples in `inst/example`.
+- **Flood complex** *(in development)* — a lightweight filtered complex on landmarks for large-scale persistent homology, following Graf et al. (NeurIPS 2025).
 
-# You can find its' topology feature by using these functions
-faces(vr_complex$simplices, target_dim=1)
-boundary(vr_complex$simplices, 1)
-betti_number(vr_complex$simplices, 1, tol=0.1)
-euler_characteristic(simplices, tol=0.1)
-abstract_simplicial_complex(simplices, 2)
+## Playground
 
-# Plot the Vietoris-rips complex
-plot(
-  vr_complex$network,
-  layout = points,
-  vertex.label = 1:nrow(points),
-  vertex.size = 12,
-  edge.arrow.mode = 0,
-  asp = 1
-)
+Try the [interactive playground](https://tf3q5u-0-0.shinyapps.io/simplicialcomplex/) to get familiar with all the concepts used in TDA.
 
-# Filtration, Boundary reduction, and Persistence informations
-F <- build_vr_filtration(points, eps_max=1.2)
-res <- boundary_info(F)
-pairs <- extract_persistence_pairs(F, res$last_1, res$pivot_owner)
-plot_persistence(pairs)
-```
-
-**Playground**<br/>
-Try this [playground](https://tf3q5u-0-0.shinyapps.io/simplicialcomplex/) to get familier with all of the concept that will be used in TDA.<br/>
 ![App](man/figures/App.png)
 
-## Reference
-- Zomorodian, A., & Carlsson, G. (2004, June). Computing persistent homology. In Proceedings of the twentieth annual symposium on Computational geometry (pp. 347-356).
-- Chazal, F., & Michel, B. (2021). An introduction to topological data analysis: fundamental and practical aspects for data scientists. Frontiers in artificial intelligence, 4, 667963.
+## References
+
+- Zomorodian, A., & Carlsson, G. (2004). Computing persistent homology. *Proceedings of the Twentieth Annual Symposium on Computational Geometry*, 347–356.
+- Chazal, F., & Michel, B. (2021). An introduction to topological data analysis: Fundamental and practical aspects for data scientists. *Frontiers in Artificial Intelligence*, 4, 667963.
+- Graf, F., Pellizzoni, P., Uray, M., Huber, S., & Kwitt, R. (2025). The Flood Complex: Large-scale persistent homology on millions of points. *Advances in Neural Information Processing Systems*, 38.

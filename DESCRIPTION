@@ -1,7 +1,7 @@
 Package: SimplicialComplex
 Type: Package
 Title: Topological Data Analysis: Simplicial Complex
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(person("ChiChien", "Wang", email = "kennywang2003@gmail.com", role = c("aut", "cre", "trl")))
 Maintainer: ChiChien Wang <kennywang2003@gmail.com>
 Description: Provides an implementation of simplicial complexes for 
@@ -18,7 +18,9 @@ Imports:
   Matrix,
   gtools,
   igraph,
-  ggplot2
+  ggplot2,
+  geometry,
+  RANN
 License: MIT + file LICENSE
 URL: https://github.com/TDA-R/SimplicialComplex
 BugReports: https://github.com/TDA-R/SimplicialComplex/issues
@@ -26,5 +28,6 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
 Suggests: 
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    torch
 Config/testthat/edition: 3
