@@ -1,15 +1,63 @@
+#' Restrict a filtration list to simplices up to a given dimension
+#'
+#' Drops every simplex of dimension greater than \code{max_dimension} from a
+#' filtration list; everything else (order, ties, \code{t} values) is left
+#' untouched.
+#'
+#' @param filist A filtration list, as produced by
+#'   \code{\link{build_filtration}}/\code{\link{build_flood_filtration}}.
+#' @param max_dimension Maximum simplex dimension to keep (\code{0} = vertices
+#'   only, \code{1} = vertices + edges, etc.).
+#' @return A filtration list containing only the entries with dimension
+#'   \code{<= max_dimension}, in the same relative order.
+#'
+#' @export
+#' @examples
+#' points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
+#' filtration <- build_filtration(points, method = "VR", eps_max = 1.2)
+#' restrict_filtration(filtration, max_dimension = 1) # vertices + edges only
+restrict_filtration <- function(filist, max_dimension) {
+  Filter(function(x) length(x$simplex) - 1 <= max_dimension, filist)
+}
+
 #' Get the boundary matrix and its reduction information in matrix form
 #'
 #' @param filist Filtration list, each element includes simplex and time.
-#' @return A list containing the boundary matrix, the last boundary row, and the pivot owner for persistence extraction.
+#' @param max_dimension Optional maximum homology dimension to eventually
+#'   report via \code{\link{extract_persistence_pairs}}. When set,
+#'   \code{filist} is first restricted to \code{max_dimension + 1} (one
+#'   extra dimension, kept only so dimension-\code{max_dimension} classes
+#'   are correctly killed - see \code{\link{restrict_filtration}}'s
+#'   Details) before the boundary matrix is built and reduced. Leave
+#'   \code{NULL} (default) to fall back to \code{filist}'s own
+#'   \code{"max_dimension"} attribute (set automatically when it came from
+#'   \code{\link{build_filtration}} with \code{max_dimension} supplied
+#'   there), or to use \code{filist} uncapped if that attribute is also
+#'   absent.
+#' @return A list containing the boundary matrix, the last boundary row, the
+#'   pivot owner for persistence extraction, and \code{filist} - the exact
+#'   (possibly \code{max_dimension}-restricted) filtration list the other
+#'   three elements were computed from, re-tagged with the same
+#'   \code{"max_dimension"} attribute so \code{\link{extract_persistence_pairs}}
+#'   can auto-detect it too. Always pass THIS \code{filist} back into
+#'   \code{\link{extract_persistence_pairs}}, not your original one - see its
+#'   Details for why.
 #'
 #' @importFrom utils combn tail
 #' @export
 #' @examples
 #' points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
-#' filtration <- build_vr_filtration(points, eps_max=1.2)
+#' filtration <- build_filtration(points, method = "VR", eps_max = 1.2)
 #' res <- boundary_info(filtration)
-boundary_info <- function(filist) {
+boundary_info <- function(filist, max_dimension = NULL) {
+  if (is.null(max_dimension)) max_dimension <- attr(filist, "max_dimension")
+  if (!is.null(max_dimension)) {
+    filist <- restrict_filtration(filist, max_dimension + 1)
+    # Filter()/subsetting on a plain list drops attributes, so re-tag here -
+    # this is what lets extract_persistence_pairs(res$filist, ...) auto-
+    # detect max_dimension without it being passed again.
+    attr(filist, "max_dimension") <- max_dimension
+  }
 
   boundary <- matrix(nrow = length(filist), ncol = length(filist), data = 0)
   name_vec = list()
@@ -82,24 +130,68 @@ boundary_info <- function(filist) {
     }
   }
 
-  return(list(boundary = boundary, last_1 = last_1, pivot_owner = pivot_owner))
+  return(list(boundary = boundary, last_1 = last_1, pivot_owner = pivot_owner, filist = filist))
 
 }
 
 #' This function extracts the persistence from combining the boundary matrix and its filtration
 #'
 #' @param filist Filtration list, each element includes simplex and time.
+#'   When \code{boundary_info()} was called with \code{max_dimension} set,
+#'   this MUST be \code{res$filist} (the restricted list it returned), not
+#'   your original filtration - \code{last_1}/\code{pivot_owner} are indexed
+#'   positionally against whatever \code{filist} \code{boundary_info()}
+#'   actually used, so passing a different-length \code{filist} here would
+#'   silently pair the wrong simplices. See Details.
 #' @param last_1 The last 1 row index for each column in boundary matrix (after reduction).
 #' @param pivot_owner The column index owning the pivot row.
+#' @param max_dimension Optional maximum homology dimension to report. Set
+#'   this to the SAME value passed to \code{boundary_info()} (which kept one
+#'   extra dimension internally for correct killers - see
+#'   \code{\link{restrict_filtration}}'s Details); only that extra dimension
+#'   is dropped here. Leave \code{NULL} (default) to fall back to
+#'   \code{filist}'s own \code{"max_dimension"} attribute (present when
+#'   \code{filist} is \code{res$filist} from a \code{boundary_info()} call
+#'   that used \code{max_dimension}, directly or via its own fallback to
+#'   \code{\link{build_filtration}}'s attribute), or to report every
+#'   dimension present in \code{filist} if that attribute is also absent.
 #' @return A data frame with columns: dimension, birth, and death.
+#'
+#' @details
+#' \code{boundary_info()} and \code{extract_persistence_pairs()} are two
+#' halves of one computation - \code{last_1}/\code{pivot_owner} only mean
+#' anything relative to the exact \code{filist} \code{boundary_info()} used
+#' internally. Whenever \code{max_dimension} is involved, always call as:
+#' \preformatted{
+#' res <- boundary_info(filtration, max_dimension = k)
+#' pairs <- extract_persistence_pairs(res$filist, res$last_1, res$pivot_owner,
+#'                                     max_dimension = k)
+#' }
+#' A length mismatch between \code{filist} and \code{last_1}/\code{pivot_owner}
+#' is refused with an error rather than silently producing wrong pairs - see
+#' \code{\link{persistence_pairs}} for a one-call alternative that cannot run
+#' into this.
 #'
 #' @export
 #' @examples
 #' points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
-#' filtration <- build_vr_filtration(points, eps_max=1.2)
+#' filtration <- build_filtration(points, method = "VR", eps_max = 1.2)
 #' res <- boundary_info(filtration)
 #' pairs <- extract_persistence_pairs(filtration, res$last_1, res$pivot_owner)
-extract_persistence_pairs <- function(filist, last_1, pivot_owner) {
+extract_persistence_pairs <- function(filist, last_1, pivot_owner, max_dimension = NULL) {
+  if (is.null(max_dimension)) max_dimension <- attr(filist, "max_dimension")
+  if (length(filist) != length(last_1) || length(filist) != length(pivot_owner)) {
+    stop(sprintf(
+      paste(
+        "filist has %d simplices but last_1/pivot_owner have %d/%d - these",
+        "must come from the same boundary_info() call. If boundary_info()",
+        "was called with max_dimension set, pass its res$filist here, not",
+        "your original filtration."
+      ),
+      length(filist), length(last_1), length(pivot_owner)
+    ))
+  }
+
   pairs <- list()
   for (row in seq_along(pivot_owner)) {
     col <- pivot_owner[row]
@@ -156,6 +248,14 @@ extract_persistence_pairs <- function(filist, last_1, pivot_owner) {
     birth = sapply(pairs, function(x) x$birth),
     death = sapply(pairs, function(x) x$death)
   )
+
+  if (!is.null(max_dimension)) {
+    # drop the extra dimension boundary_info() kept only so max_dimension's
+    # classes were correctly killed above - never meant to be reported.
+    df <- df[df$dim <= max_dimension, , drop = FALSE]
+    rownames(df) <- NULL
+  }
+
   return(df)
 }
 
@@ -170,15 +270,35 @@ extract_persistence_pairs <- function(filist, last_1, pivot_owner) {
 #' feasible. Output is identical to the dense pipeline.
 #'
 #' @param filist Filtration list, each element includes simplex and time.
+#' @param max_dimension Optional maximum homology dimension to report
+#'   (\code{0} = H0 only, \code{1} = H0 and H1, etc.). When set, one extra
+#'   dimension is kept internally so dimension-\code{max_dimension} classes
+#'   still get their correct death time from their true (max_dimension+1)
+#'   killers, and only that extra dimension is dropped from the returned
+#'   pairs - see \code{\link{restrict_filtration}}'s Details for why a plain
+#'   truncation would be wrong. Leave \code{NULL} (default) to fall back to
+#'   \code{filist}'s own \code{"max_dimension"} attribute (set automatically
+#'   when \code{filist} came from \code{\link{build_filtration}} with
+#'   \code{max_dimension} supplied there), or to report every dimension
+#'   present in \code{filist} if that attribute is also absent.
 #' @return A data frame with columns: dim, birth, and death.
 #'
 #' @importFrom utils combn
 #' @export
 #' @examples
 #' points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
-#' filtration <- build_vr_filtration(points, eps_max=1.2)
+#' filtration <- build_filtration(points, method = "VR", eps_max = 1.2)
 #' pairs <- persistence_pairs(filtration)
-persistence_pairs <- function(filist) {
+#' pairs_h0_only <- persistence_pairs(filtration, max_dimension = 0)
+#' # or bake the cap into the filtration itself, and drop the argument here:
+#' capped <- build_filtration(points, method = "VR", eps_max = 1.2,
+#'                             max_dimension = 0)
+#' pairs_h0_only2 <- persistence_pairs(capped)
+persistence_pairs <- function(filist, max_dimension = NULL) {
+  if (is.null(max_dimension)) max_dimension <- attr(filist, "max_dimension")
+  if (!is.null(max_dimension)) {
+    filist <- restrict_filtration(filist, max_dimension + 1)
+  }
   n <- length(filist)
   keys <- vapply(filist, function(x) paste(x$simplex, collapse = " "), "")
   index <- new.env(hash = TRUE, parent = emptyenv())
@@ -227,5 +347,13 @@ persistence_pairs <- function(filist) {
       dim = dims[essential], birth = ts[essential], death = Inf))
   }
   rownames(pairs) <- NULL
-  pairs[order(pairs$dim, pairs$birth), ]
+  pairs <- pairs[order(pairs$dim, pairs$birth), ]
+
+  if (!is.null(max_dimension)) {
+    # drop the extra dimension kept only so max_dimension's classes were
+    # correctly killed above - it was never meant to be reported itself.
+    pairs <- pairs[pairs$dim <= max_dimension, , drop = FALSE]
+    rownames(pairs) <- NULL
+  }
+  pairs
 }

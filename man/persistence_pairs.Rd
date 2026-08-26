@@ -4,10 +4,22 @@
 \alias{persistence_pairs}
 \title{Persistence pairs via sparse boundary reduction (for large filtrations)}
 \usage{
-persistence_pairs(filist)
+persistence_pairs(filist, max_dimension = NULL)
 }
 \arguments{
 \item{filist}{Filtration list, each element includes simplex and time.}
+
+\item{max_dimension}{Optional maximum homology dimension to report
+(\code{0} = H0 only, \code{1} = H0 and H1, etc.). When set, one extra
+dimension is kept internally so dimension-\code{max_dimension} classes
+still get their correct death time from their true (max_dimension+1)
+killers, and only that extra dimension is dropped from the returned
+pairs - see \code{\link{restrict_filtration}}'s Details for why a plain
+truncation would be wrong. Leave \code{NULL} (default) to fall back to
+\code{filist}'s own \code{"max_dimension"} attribute (set automatically
+when \code{filist} came from \code{\link{build_filtration}} with
+\code{max_dimension} supplied there), or to report every dimension
+present in \code{filist} if that attribute is also absent.}
 }
 \value{
 A data frame with columns: dim, birth, and death.
@@ -23,6 +35,11 @@ feasible. Output is identical to the dense pipeline.
 }
 \examples{
 points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
-filtration <- build_vr_filtration(points, eps_max=1.2)
+filtration <- build_filtration(points, method = "VR", eps_max = 1.2)
 pairs <- persistence_pairs(filtration)
+pairs_h0_only <- persistence_pairs(filtration, max_dimension = 0)
+# or bake the cap into the filtration itself, and drop the argument here:
+capped <- build_filtration(points, method = "VR", eps_max = 1.2,
+                            max_dimension = 0)
+pairs_h0_only2 <- persistence_pairs(capped)
 }

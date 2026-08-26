@@ -7,7 +7,8 @@ source("./R/Faces.R")
 source("./R/Betti.R")
 source("./R/Boundary.R")
 source("./R/EulerCharacteristic.R")
-source("./R/AbstractSimplicialComplex.R")
+source("R/ComplexUtils.R")
+source("R/Filtration.R")
 
 simplices <- list(c(1, 2), c(3, 4), c(2, 1, 3), c(4, 2))
 
@@ -27,14 +28,14 @@ betti_number(simplices, 3, tol=0.1)
 
 euler_characteristic(simplices, tol=0.1)
 
-abstract_simplicial_complex(simplices, 2)
-
 source("R/VRComplex.R")
-points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
-epsilon <- 1.5
+set.seed(42)
+points <- matrix(runif(20), ncol = 2)
+epsilon <- 0.5
 
 vr_complex <- VietorisRipsComplex(points, epsilon)
-#
+# cech_complex <- CechComplex(points, epsilon)
+
 # E(vr_complex$network)
 # vr_complex$simplices
 
@@ -51,8 +52,7 @@ plot(
   asp = 1
 )
 
-source("R/Filtration.R")
-filtration <- build_vr_filtration(points, eps_max=1.2)
+filtration <- build_filtration(points, method = "VR", eps_max = 1, max_dimension=2)
 
 source("R/Persistence.R")
 res <- boundary_info(filtration)
@@ -61,3 +61,20 @@ pairs <- extract_persistence_pairs(filtration, res$last_1, res$pivot_owner)
 source("R/PlotPD.R")
 plot_persistence(pairs)
 
+source("R/PersistenceLandscape.R")
+landscape <- persistence_landscape(pairs, dimension = 0)
+plot_landscape(landscape)
+
+source("R/CubicalComplex.R")
+image <- matrix(c(
+  9, 9, 9, 9, 9,
+  9, 1, 1, 1, 9,
+  9, 1, 5, 1, 9,
+  9, 1, 1, 1, 9,
+  9, 9, 9, 9, 9
+), nrow = 5, byrow = TRUE)
+
+cubical_filtration <- build_cubical_filtration(image)
+cubical_pairs <- persistence_pairs(cubical_filtration)
+cubical_pairs[cubical_pairs$dim == 1, ] # H1: birth = 1 (ring closes), death = 5 (hole fills)
+plot_persistence(cubical_pairs)

@@ -48,4 +48,3 @@ safe_rank <- function(mat, tol = NULL) {
     return(rankMatrix(mat, tol = tol))
   }
 }
-

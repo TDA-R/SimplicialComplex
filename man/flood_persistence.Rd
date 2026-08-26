@@ -4,11 +4,19 @@
 \alias{flood_persistence}
 \title{Persistence pairs via sparse boundary reduction}
 \usage{
-flood_persistence(filist)
+flood_persistence(filist, max_dimension = NULL)
 }
 \arguments{
 \item{filist}{A filtration list (from \code{build_flood_filtration} or
-\code{build_vr_filtration}).}
+\code{build_filtration}).}
+
+\item{max_dimension}{Optional maximum homology dimension to report. When
+set, one extra dimension is kept internally so dimension-\code{max_dimension}
+classes still get correct death times from their true killers, and only
+that extra dimension is dropped from the output - see
+\code{\link{restrict_filtration}}'s Details, and
+\code{\link{persistence_pairs}} which applies the same correction.
+Leave \code{NULL} (default) to report every dimension present.}
 }
 \value{
 A data frame with columns \code{dim}, \code{birth}, \code{death}.

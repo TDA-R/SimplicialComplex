@@ -290,7 +290,7 @@ flood_complex <- function(points,
 #' Flood filtration in SimplicialComplex format
 #'
 #' Wraps \code{\link{flood_complex}} and returns the filtration in the same
-#' format as \code{\link{build_vr_filtration}}: a list of
+#' format as \code{\link{build_filtration}}: a list of
 #' \code{list(simplex = <integer vector>, t = <numeric>)}, sorted by
 #' (time, dimension, lexicographic order). The result plugs directly into
 #' \code{boundary_info()} / \code{extract_persistence_pairs()} /
@@ -338,11 +338,21 @@ as_filtration <- function(fc) {
 #' \code{\link{build_flood_filtration}}.
 #'
 #' @param filist A filtration list (from \code{build_flood_filtration} or
-#'   \code{build_vr_filtration}).
+#'   \code{build_filtration}).
+#' @param max_dimension Optional maximum homology dimension to report. When
+#'   set, one extra dimension is kept internally so dimension-\code{max_dimension}
+#'   classes still get correct death times from their true killers, and only
+#'   that extra dimension is dropped from the output - see
+#'   \code{\link{restrict_filtration}}'s Details, and
+#'   \code{\link{persistence_pairs}} which applies the same correction.
+#'   Leave \code{NULL} (default) to report every dimension present.
 #' @return A data frame with columns \code{dim}, \code{birth}, \code{death}.
 #'
 #' @export
-flood_persistence <- function(filist) {
+flood_persistence <- function(filist, max_dimension = NULL) {
+  if (!is.null(max_dimension)) {
+    filist <- restrict_filtration(filist, max_dimension + 1)
+  }
   n <- length(filist)
   keys <- vapply(filist, function(x) paste(x$simplex, collapse = " "), "")
   index <- new.env(hash = TRUE, parent = emptyenv())
@@ -389,5 +399,11 @@ flood_persistence <- function(filist) {
       dim = dims[essential], birth = ts[essential], death = Inf))
   }
   rownames(pairs) <- NULL
-  pairs[order(pairs$dim, pairs$birth), ]
+  pairs <- pairs[order(pairs$dim, pairs$birth), ]
+
+  if (!is.null(max_dimension)) {
+    pairs <- pairs[pairs$dim <= max_dimension, , drop = FALSE]
+    rownames(pairs) <- NULL
+  }
+  pairs
 }

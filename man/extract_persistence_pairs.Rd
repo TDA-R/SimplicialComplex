@@ -4,14 +4,31 @@
 \alias{extract_persistence_pairs}
 \title{This function extracts the persistence from combining the boundary matrix and its filtration}
 \usage{
-extract_persistence_pairs(filist, last_1, pivot_owner)
+extract_persistence_pairs(filist, last_1, pivot_owner, max_dimension = NULL)
 }
 \arguments{
-\item{filist}{Filtration list, each element includes simplex and time.}
+\item{filist}{Filtration list, each element includes simplex and time.
+When \code{boundary_info()} was called with \code{max_dimension} set,
+this MUST be \code{res$filist} (the restricted list it returned), not
+your original filtration - \code{last_1}/\code{pivot_owner} are indexed
+positionally against whatever \code{filist} \code{boundary_info()}
+actually used, so passing a different-length \code{filist} here would
+silently pair the wrong simplices. See Details.}
 
 \item{last_1}{The last 1 row index for each column in boundary matrix (after reduction).}
 
 \item{pivot_owner}{The column index owning the pivot row.}
+
+\item{max_dimension}{Optional maximum homology dimension to report. Set
+this to the SAME value passed to \code{boundary_info()} (which kept one
+extra dimension internally for correct killers - see
+\code{\link{restrict_filtration}}'s Details); only that extra dimension
+is dropped here. Leave \code{NULL} (default) to fall back to
+\code{filist}'s own \code{"max_dimension"} attribute (present when
+\code{filist} is \code{res$filist} from a \code{boundary_info()} call
+that used \code{max_dimension}, directly or via its own fallback to
+\code{\link{build_filtration}}'s attribute), or to report every
+dimension present in \code{filist} if that attribute is also absent.}
 }
 \value{
 A data frame with columns: dimension, birth, and death.
@@ -19,9 +36,24 @@ A data frame with columns: dimension, birth, and death.
 \description{
 This function extracts the persistence from combining the boundary matrix and its filtration
 }
+\details{
+\code{boundary_info()} and \code{extract_persistence_pairs()} are two
+halves of one computation - \code{last_1}/\code{pivot_owner} only mean
+anything relative to the exact \code{filist} \code{boundary_info()} used
+internally. Whenever \code{max_dimension} is involved, always call as:
+\preformatted{
+res <- boundary_info(filtration, max_dimension = k)
+pairs <- extract_persistence_pairs(res$filist, res$last_1, res$pivot_owner,
+                                    max_dimension = k)
+}
+A length mismatch between \code{filist} and \code{last_1}/\code{pivot_owner}
+is refused with an error rather than silently producing wrong pairs - see
+\code{\link{persistence_pairs}} for a one-call alternative that cannot run
+into this.
+}
 \examples{
 points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
-filtration <- build_vr_filtration(points, eps_max=1.2)
+filtration <- build_filtration(points, method = "VR", eps_max = 1.2)
 res <- boundary_info(filtration)
 pairs <- extract_persistence_pairs(filtration, res$last_1, res$pivot_owner)
 }

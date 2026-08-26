@@ -20,9 +20,7 @@
 #' points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
 #' epsilon <- 1.5
 #' vr_complex <- VietorisRipsComplex(points, epsilon)
-VietorisRipsComplex <- function(
-    points, epsilon
-    ) {
+VietorisRipsComplex <- function(points, epsilon) {
 
   labels <- 1:nrow(points)
 

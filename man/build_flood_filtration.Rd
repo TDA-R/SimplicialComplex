@@ -18,7 +18,7 @@ A filtration list compatible with \code{boundary_info}.
 }
 \description{
 Wraps \code{\link{flood_complex}} and returns the filtration in the same
-format as \code{\link{build_vr_filtration}}: a list of
+format as \code{\link{build_filtration}}: a list of
 \code{list(simplex = <integer vector>, t = <numeric>)}, sorted by
 (time, dimension, lexicographic order). The result plugs directly into
 \code{boundary_info()} / \code{extract_persistence_pairs()} /

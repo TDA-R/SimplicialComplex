@@ -4,19 +4,38 @@
 \alias{boundary_info}
 \title{Get the boundary matrix and its reduction information in matrix form}
 \usage{
-boundary_info(filist)
+boundary_info(filist, max_dimension = NULL)
 }
 \arguments{
 \item{filist}{Filtration list, each element includes simplex and time.}
+
+\item{max_dimension}{Optional maximum homology dimension to eventually
+report via \code{\link{extract_persistence_pairs}}. When set,
+\code{filist} is first restricted to \code{max_dimension + 1} (one
+extra dimension, kept only so dimension-\code{max_dimension} classes
+are correctly killed - see \code{\link{restrict_filtration}}'s
+Details) before the boundary matrix is built and reduced. Leave
+\code{NULL} (default) to fall back to \code{filist}'s own
+\code{"max_dimension"} attribute (set automatically when it came from
+\code{\link{build_filtration}} with \code{max_dimension} supplied
+there), or to use \code{filist} uncapped if that attribute is also
+absent.}
 }
 \value{
-A list containing the boundary matrix, the last boundary row, and the pivot owner for persistence extraction.
+A list containing the boundary matrix, the last boundary row, the
+  pivot owner for persistence extraction, and \code{filist} - the exact
+  (possibly \code{max_dimension}-restricted) filtration list the other
+  three elements were computed from, re-tagged with the same
+  \code{"max_dimension"} attribute so \code{\link{extract_persistence_pairs}}
+  can auto-detect it too. Always pass THIS \code{filist} back into
+  \code{\link{extract_persistence_pairs}}, not your original one - see its
+  Details for why.
 }
 \description{
 Get the boundary matrix and its reduction information in matrix form
 }
 \examples{
 points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
-filtration <- build_vr_filtration(points, eps_max=1.2)
+filtration <- build_filtration(points, method = "VR", eps_max = 1.2)
 res <- boundary_info(filtration)
 }
