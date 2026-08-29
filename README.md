@@ -1,6 +1,6 @@
 # Topological Data Analysis: Simplicial Complex
 
-[![CRAN status](https://www.r-pkg.org/badges/version/SimplicialComplex)](https://cran.r-project.org/package=SimplicialComplex) <a href="https://CRAN.R-project.org/package=SimplicialComplex" target="_blank" rel="noreferrer"> <img src="https://cranlogs.r-pkg.org/badges/grand-total/SimplicialComplex" alt="CRAN downloads" width="100" height="20"/> </a>
+[![DOI](https://zenodo.org/badge/1031948864.svg)](https://doi.org/10.5281/zenodo.22163397) [![CRAN status](https://www.r-pkg.org/badges/version/SimplicialComplex)](https://cran.r-project.org/package=SimplicialComplex) <a href="https://CRAN.R-project.org/package=SimplicialComplex" target="_blank" rel="noreferrer"> <img src="https://cranlogs.r-pkg.org/badges/grand-total/SimplicialComplex" alt="CRAN downloads" width="100" height="20"/> </a>
 
 `SimplicialComplex` is a user-friendly Topological Data Analysis (TDA) package written entirely in R. While most TDA libraries (Dionysus, PHAT, GUDHI) are developed in Python and C++, implementing simplicial complexes natively in R makes them directly compatible with the rich ecosystem of statistical methods R already offers.
 

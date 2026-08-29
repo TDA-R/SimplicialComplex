@@ -14,6 +14,7 @@ source("./R/AlphaComplex.R")
 source("./R/CechComplex.R")
 source("./R/FloodComplex.R") # generate_landmarks(), as_filtration()
 source("./R/WitnessComplex.R")
+source("./R/FloodComplex.R")
 source("./R/Filtration.R") # build_filtration()
 source("./R/Persistence.R")
 source("./R/PlotPD.R")
@@ -44,6 +45,10 @@ ring <- cbind(cos(theta), sin(theta)) + matrix(rnorm(2 * length(theta), sd = 0.0
 n_landmarks <- 10
 witness_filtration <- build_filtration(ring, method = "Witness", eps_max = 0.6, max_dimension=2, landmarks = n_landmarks)
 cat(sprintf("Witness: %d simplices on %d landmarks\n", length(witness_filtration), n_landmarks))
+
+# Flood
+flood_filtration <- build_flood_filtration(points, landmarks = 20, points_per_edge = 15, backend = "cpu")
+cat(sprintf("Flood: %d simplices\n", length(flood_filtration)))
 
 
 show_top_bars <- function(pairs, label, top_n = 3) {
