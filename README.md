@@ -10,6 +10,9 @@
 - **Topological invariants**: Faces, boundary matrices, Betti numbers, and the Euler characteristic.
 - **Persistent homology**: filtrations, boundary-matrix reduction, persistence pairs, persistence diagrams, and persistence landscape.
 - **Statistical**: Wasserstein distance & bottleneck distance were built in the latest version, with matching plot.
+- **Time/Step consideration**: CROCKER and Zigzag persistence with plots.
+- **Discrete Morse Theory**: Discrete Morse Vector Fields (DMVF) with plots.
+- **Laplacians**: Basic Laplacian, persistent laplacian, and hodge laplacian
 - **Examples**: Full worked examples in `inst/example`.
 
 ## Playground
@@ -22,3 +25,5 @@ Try the [interactive playground](https://tf3q5u-0-0.shinyapps.io/simplicialcompl
 - Chazal, F., & Michel, B. (2021). An introduction to topological data analysis: Fundamental and practical aspects for data scientists. *Frontiers in Artificial Intelligence*, 4, 667963.
 - Graf, F., Pellizzoni, P., Uray, M., Huber, S., & Kwitt, R. (2025). The Flood Complex: Large-scale persistent homology on millions of points. *Advances in Neural Information Processing Systems*, 38.
 - Otter, N., Porter, M. A., Tillmann, U., Grindrod, P., & Harrington, H. A. (2017). A roadmap for the computation of persistent homology. EPJ data science, 6(1), 17.
+- Wei, X., & Wei, G. W. (2025). Persistent topological laplacians—a survey. Mathematics, 13(2), 208.
+- Dey, T. K., & Wang, Y. (1945). Computational topology for data analysis. American history, 1861(1900).

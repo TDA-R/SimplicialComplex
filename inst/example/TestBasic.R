@@ -7,8 +7,9 @@ source("./R/Faces.R")
 source("./R/Betti.R")
 source("./R/Boundary.R")
 source("./R/EulerCharacteristic.R")
-source("R/ComplexUtils.R")
-source("R/Filtration.R")
+source("./R/ComplexUtils.R")
+source("./R/Filtration.R")
+source("./R/Homology.R")
 
 simplices <- list(c(1, 2), c(3, 4), c(2, 1, 3), c(4, 2))
 
@@ -27,6 +28,17 @@ betti_number(simplices, 2, tol=0.1)
 betti_number(simplices, 3, tol=0.1)
 
 euler_characteristic(simplices, tol=0.1)
+
+Z1 <- ker(boundary(simplices, 1))
+Z1
+
+B1 <- im(boundary(simplices, 2))
+B1
+
+H1 <- homology(Z1, B1)
+H1
+
+ncol(H1) == betti_number(simplices, 1, tol=0.1)
 
 source("R/VRComplex.R")
 set.seed(42)

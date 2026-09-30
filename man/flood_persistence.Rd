@@ -7,16 +7,11 @@
 flood_persistence(filist, max_dimension = NULL)
 }
 \arguments{
-\item{filist}{A filtration list (from \code{build_flood_filtration} or
-\code{build_filtration}).}
+\item{filist}{A filtration list (from \code{build_flood_filtration} or \code{build_filtration}).}
 
-\item{max_dimension}{Optional maximum homology dimension to report. When
-set, one extra dimension is kept internally so dimension-\code{max_dimension}
-classes still get correct death times from their true killers, and only
-that extra dimension is dropped from the output - see
-\code{\link{restrict_filtration}}'s Details, and
-\code{\link{persistence_pairs}} which applies the same correction.
-Leave \code{NULL} (default) to report every dimension present.}
+\item{max_dimension}{Optional maximum homology dimension to report. When set, one extra dimension is kept internally so dimension-\code{max_dimension}
+classes still get correct death times from their true killers, and only that extra dimension is dropped from the output, see
+\code{\link{restrict_filtration}}'s Details, and \code{\link{persistence_pairs}} which applies the same correction.}
 }
 \value{
 A data frame with columns \code{dim}, \code{birth}, \code{death}.
@@ -26,6 +21,5 @@ Computes persistence pairs from a filtration list with the standard
 column-reduction algorithm, but on sparse columns (integer index vectors
 over GF(2)) instead of a dense matrix. Produces the same output format as
 \code{extract_persistence_pairs(filist, res$last_1, res$pivot_owner)} while
-scaling to the much larger complexes produced by
-\code{\link{build_flood_filtration}}.
+scaling to the much larger complexes produced by \code{\link{build_flood_filtration}}.
 }

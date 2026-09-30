@@ -1,11 +1,14 @@
 library(Matrix)
 library(gtools)
+library(ggplot2)
 
 source("R/Faces.R")
 source("R/Boundary.R")
 source("R/Betti.R")
 source("R/Persistence.R")
 source("R/zigzag.R")
+source("R/PlotPD.R")
+source("R/Homology.R")
 
 # Normal example
 K0 <- list(c(1, 2), c(2, 3), c(3, 4), c(4, 1), c(1, 3)) # square + diagonal: H1 = 2
@@ -21,7 +24,7 @@ print(bars)
 plot_persistence(bars)
 
 
-# Purely-growing example
+# Purely growing example
 K0 <- list(1)
 K1 <- list(1, 2)
 K2 <- list(1, 2, 3)

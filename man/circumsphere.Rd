@@ -7,20 +7,14 @@
 circumsphere(points)
 }
 \arguments{
-\item{points}{A numeric matrix, one point per row (must be affinely
-independent, i.e. "general position" - see Otter et al. (2017)).}
+\item{points}{A numeric matrix, one point per row (must be affinely independent.}
 }
 \value{
 A list with \code{center} (numeric vector) and \code{radius}.
 }
 \description{
-The unique sphere through \code{points} whose center lies in their affine
-hull - i.e. the minimal-radius sphere with all of \code{points} on its
-boundary. Used by \code{\link{AlphaComplex}}/\code{\link{DelaunayComplex}}
-to compute alpha values (unlike \code{\link{min_enclosing_ball}}, which
-minimizes radius over ALL enclosing balls, this fixes every point to lie
-exactly on the sphere - the two coincide only for simplices whose
-circumcenter is not "hidden" inside the simplex in a way that admits a
-smaller covering ball).
+The unique sphere through \code{points} whose center lies in their affine hull, i.e. the minimal-radius sphere with all of \code{points} on its
+boundary. Used by \code{\link{AlphaComplex}}/\code{\link{DelaunayComplex}} to compute alpha values (unlike \code{\link{min_enclosing_ball}}, which
+minimizes radius over all enclosing balls.
 }
 \keyword{internal}

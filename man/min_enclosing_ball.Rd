@@ -13,16 +13,8 @@ min_enclosing_ball(points)
 A list with \code{center} (numeric vector) and \code{radius}.
 }
 \description{
-Used by \code{\link{CechComplex}}: the Cech complex includes a simplex
-\eqn{\sigma} at scale \eqn{\epsilon} exactly when the balls of radius
-\eqn{\epsilon} centered at its vertices have a common point, which happens
-if and only if the minimum enclosing ball of \eqn{\sigma}'s vertices has
-radius at most \eqn{\epsilon} (this is the standard reduction used e.g. by
-GUDHI's Cech complex; see Cavanna, Jahanseir and Sheehy (2017)).
-}
-\details{
-Randomized, expected linear-time in the number of points; the point sets
-passed in here are the vertices of a single simplex, so they are always
-small.
+Used by \code{\link{CechComplex}}: the Cech complex includes a simplex \eqn{\sigma} at scale \eqn{\epsilon} exactly when the balls of radius
+\eqn{\epsilon} centered at its vertices have a common point, which happens if and only if the minimum enclosing ball of \eqn{\sigma}'s vertices has
+radius at most \eqn{\epsilon} (this is the standard reduction used e.g. by GUDHI's Cech complex; see Cavanna, Jahanseir and Sheehy (2017)).
 }
 \keyword{internal}

@@ -1,3 +1,4 @@
+source("./R/ComplexUtils.R")
 source("./R/FloodComplex.R")
 
 set.seed(42)

@@ -9,8 +9,7 @@ pairwise_dist(points, query = NULL)
 \arguments{
 \item{points}{A numeric matrix, one point per row.}
 
-\item{query}{Optional second numeric matrix; if supplied, returns the
-\code{nrow(points)} x \code{nrow(query)} cross-distance matrix instead of
+\item{query}{Optional second numeric matrix; if supplied, returns the \code{nrow(points)} x \code{nrow(query)} cross-distance matrix instead of
 the full pairwise matrix of \code{points} with itself.}
 }
 \value{

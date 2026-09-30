@@ -1,21 +1,18 @@
-#' @keywords internal
-#' Example:
-#'   .zz_simplex_key(c(2, 1, 3))
-#'   #> [1] "1-2-3"
+# Example:
+#   .zz_simplex_key(c(2, 1, 3))
+#   #> [1] "1-2-3"
 .zz_simplex_key <- function(simplex) paste(sort(simplex), collapse = "-")
 
-#' @keywords internal
-#' Example:
-#'   .zz_simplex_keys(list(c(1, 2), c(3, 2)))
-#'   #> [1] "1-2" "2-3"
+# Example:
+#   .zz_simplex_keys(list(c(1, 2), c(3, 2)))
+#   #> [1] "1-2" "2-3"
 .zz_simplex_keys <- function(simplex_list) vapply(simplex_list, .zz_simplex_key, character(1))
 
-#' @keywords internal
-#' Example:
-#'   .zz_add_chains(c("1-2" = 1, "1-3" = -1), c("1-3" = 1, "2-3" = 1))
-#'   #> 1-2 2-3
-#'   #>   1   1
-#'   # (the "1-3" entries cancel out and are dropped from the result)
+# Example:
+#   .zz_add_chains(c("1-2" = 1, "1-3" = -1), c("1-3" = 1, "2-3" = 1))
+#   #> 1-2 2-3
+#   #>   1   1
+#   # (the "1-3" entries cancel out and are dropped from the result)
 .zz_add_chains <- function(a, b) {
 
   keys <- union(names(a), names(b))
@@ -26,18 +23,16 @@
   out[abs(out) > 1e-8]
 }
 
-#' @keywords internal
-#' Example:
-#'   .zz_chain_keys_union(list(c("1-2" = 1, "1-3" = -1), c("2-3" = 1)))
-#'   #> [1] "1-2" "1-3" "2-3"
+# Example:
+#   .zz_chain_keys_union(list(c("1-2" = 1, "1-3" = -1), c("2-3" = 1)))
+#   #> [1] "1-2" "1-3" "2-3"
 .zz_chain_keys_union <- function(vecs) unique(unlist(lapply(vecs, names)))
 
-#' Full closure (every face of every dimension) of a maximal-simplex list
-#' @keywords internal
-#' Example:
-#'   .zz_simplicial_closure(list(c(1, 2, 3)))
-#'   #> list(1, 2, 3, c(1,2), c(1,3), c(2,3), c(1,2,3))
-#'   # (every vertex, every edge, and the triangle itself)
+# Full closure (every face of every dimension) of a maximal-simplex list
+# Example:
+#   .zz_simplicial_closure(list(c(1, 2, 3)))
+#   #> list(1, 2, 3, c(1,2), c(1,3), c(2,3), c(1,2,3))
+#   # (every vertex, every edge, and the triangle itself)
 .zz_simplicial_closure <- function(complex) {
 
   if (length(complex) == 0) return(list())
@@ -45,13 +40,12 @@
   unlist(lapply(0:max_dim, function(p) faces(complex, p)), recursive = FALSE)
 }
 
-#' @keywords internal
-#' Example:
-#'   .zz_chains_to_matrix(list(c("1-2" = 1, "1-3" = -1), c("2-3" = 1)), keys = c("1-2", "1-3", "2-3"))
-#'   #>     [,1] [,2]
-#'   #> 1-2    1    0
-#'   #> 1-3   -1    0
-#'   #> 2-3    0    1
+# Example:
+#   .zz_chains_to_matrix(list(c("1-2" = 1, "1-3" = -1), c("2-3" = 1)), keys = c("1-2", "1-3", "2-3"))
+#   #>     [,1] [,2]
+#   #> 1-2    1    0
+#   #> 1-3   -1    0
+#   #> 2-3    0    1
 .zz_chains_to_matrix <- function(vecs, keys) {
 
   M <- matrix(0, nrow = length(keys), ncol = length(vecs))
@@ -64,66 +58,24 @@
   M
 }
 
-#' Row-reduce (partial pivoting) a matrix, used internally for zigzag linear algebra
-#' @keywords internal
-#' Example (boundary of edges 1-2, 1-3, 2-3; rows = vertices 1, 2, 3):
-#'   M <- matrix(c(1,1,0, -1,0,1, 0,-1,-1), nrow = 3, byrow = TRUE)
-#'   .zz_gauss_jordan_eliminate(M)
-#'   #> $R
-#'   #>   [,1] [,2] [,3]
-#'   #> 1    1    0   -1
-#'   #> 2    0    1    1
-#'   #> 3    0    0    0
-#'   #> $pivots
-#'   #> [1] 1 2
-.zz_gauss_jordan_eliminate <- function(M, tol = 1e-8) {
-
-  M <- as.matrix(M)
-  storage.mode(M) <- "double"
-  nr <- nrow(M)
-  nc <- ncol(M)
-  pivots <- integer(0)
-  r <- 1
-
-  for (cc in seq_len(nc)) {
-    if (r > nr) break
-    col <- M[r:nr, cc]
-    rel <- which.max(abs(col))
-    piv_row <- rel + r - 1
-    if (abs(M[piv_row, cc]) < tol) next
-    if (piv_row != r) {
-      tmp <- M[r, ]; M[r, ] <- M[piv_row, ]; M[piv_row, ] <- tmp
-    }
-    M[r, ] <- M[r, ] / M[r, cc]
-    for (i in seq_len(nr)) {
-      if (i != r && abs(M[i, cc]) > tol) M[i, ] <- M[i, ] - M[i, cc] * M[r, ]
-    }
-    pivots <- c(pivots, cc)
-    r <- r + 1
-  }
-  list(R = M, pivots = pivots)
-}
-
-#' Rank of a real matrix.
-#' @keywords internal
-#' Example:
-#'   M <- matrix(c(1,1,0, -1,0,1, 0,-1,-1), nrow = 3, byrow = TRUE)
-#'   .zz_matrix_rank(M)
-#'   #> [1] 2
+# Rank of a real matrix.
+# Example:
+#   M <- matrix(c(1,1,0, -1,0,1, 0,-1,-1), nrow = 3, byrow = TRUE)
+#   .zz_matrix_rank(M)
+#   #> [1] 2
 .zz_matrix_rank <- function(M) {
 
   if (is.null(M) || ncol(M) == 0 || nrow(M) == 0) return(0L)
   as.numeric(safe_rank(M))
 }
 
-#' Solve target = sum(c_i * gens[[i]]) over the reals; NULL if infeasible
-#' @keywords internal
-#' Example:
-#'   target <- c("1-2" = 1, "2-3" = -1)
-#'   gens <- list(c("1-2" = 1, "1-3" = -1), c("1-3" = 1, "2-3" = -1))
-#'   .zz_solve_linear_combination(target, gens)
-#'   #> [1] 1 1
-#'   # (target = 1*gens[[1]] + 1*gens[[2]]; NULL would mean no such combination exists)
+# Solve target = sum(c_i * gens[[i]]) over the reals; NULL if infeasible
+# Example:
+#   target <- c("1-2" = 1, "2-3" = -1)
+#   gens <- list(c("1-2" = 1, "1-3" = -1), c("1-3" = 1, "2-3" = -1))
+#   .zz_solve_linear_combination(target, gens)
+#   #> [1] 1 1
+#   # (target = 1*gens[[1]] + 1*gens[[2]]; NULL would mean no such combination exists)
 .zz_solve_linear_combination <- function(target, gens, tol = 1e-8) {
 
   keys <- union(names(target), .zz_chain_keys_union(gens))
@@ -136,7 +88,7 @@
   Gmat <- .zz_chains_to_matrix(gens, keys)
   tvec <- .zz_chains_to_matrix(list(target), keys)[, 1]
   aug <- cbind(Gmat, tvec)
-  rr <- .zz_gauss_jordan_eliminate(aug, tol)
+  rr <- gauss_jordan_eliminate(aug, tol)
   R <- rr$R; piv <- rr$pivots
   last_col <- ncol(aug)
 
@@ -149,12 +101,11 @@
   coeffs
 }
 
-#' Boundary of a single simplex as a named (by facet key) vector
-#' @keywords internal
-#' Example:
-#'   .zz_simplex_boundary(c(1, 2, 3))
-#'   #> 1-2 1-3 2-3
-#'   #>   1  -1   1
+# Boundary of a single simplex as a named (by facet key) vector
+# Example:
+#   .zz_simplex_boundary(c(1, 2, 3))
+#   #> 1-2 1-3 2-3
+#   #>   1  -1   1
 .zz_simplex_boundary <- function(sx) {
 
   q <- length(sx) - 1
@@ -167,104 +118,84 @@
   v[abs(v) > 1e-8]
 }
 
-#' Basis for the column space of a boundary matrix, as a list of named vectors
-#' @keywords internal
-#' Example (the single 2-simplex 1-2-3, boundary onto its 3 edges):
-#'   Mat <- boundary(list(c(1, 2, 3)), 2)
-#'   .zz_boundaries_basis(Mat, row_keys = c("1-2", "1-3", "2-3"))
-#'   #> [[1]]
-#'   #> 1-2 1-3 2-3
-#'   #>   1  -1   1
+# Basis for the column space of a boundary matrix, as a list of named vectors
+# Example (the single 2-simplex 1-2-3, boundary onto its 3 edges):
+#   Mat <- boundary(list(c(1, 2, 3)), 2)
+#   .zz_boundaries_basis(Mat, row_keys = c("1-2", "1-3", "2-3"))
+#   #> [[1]]
+#   #> 1-2 1-3 2-3
+#   #>   1  -1   1
 .zz_boundaries_basis <- function(Mat, row_keys) {
 
   if (is.null(Mat) || ncol(Mat) == 0 || nrow(Mat) == 0) return(list())
-  Md <- as.matrix(Mat)
-  rr <- .zz_gauss_jordan_eliminate(Md)
-  lapply(rr$pivots, function(pc) {
-    v <- Md[, pc]; names(v) <- row_keys
+  B <- im(Mat)
+  if (ncol(B) == 0) return(list())
+  lapply(seq_len(ncol(B)), function(j) {
+    v <- B[, j]; names(v) <- row_keys
     v[abs(v) > 1e-8]
   })
 }
 
-#' Basis for the null space of a boundary matrix (columns indexed by col_keys)
-#' @keywords internal
-#' Example (edges 1-2, 1-3, 2-3, boundary onto vertices 1, 2, 3):
-#'   Mat <- boundary(list(c(1, 2), c(1, 3), c(2, 3)), 1)
-#'   .zz_cycles_basis(Mat, col_keys = c("1-2", "1-3", "2-3"))
-#'   #> [[1]]
-#'   #> 1-2 1-3 2-3
-#'   #>   1  -1   1
-#'   # (the hollow triangle's single 1-cycle)
+# Basis for the null space of a boundary matrix (columns indexed by col_keys)
+# Example (edges 1-2, 1-3, 2-3, boundary onto vertices 1, 2, 3):
+#   Mat <- boundary(list(c(1, 2), c(1, 3), c(2, 3)), 1)
+#   .zz_cycles_basis(Mat, col_keys = c("1-2", "1-3", "2-3"))
+#   #> [[1]]
+#   #> 1-2 1-3 2-3
+#   #>   1  -1   1
+#   # (the hollow triangle's single 1-cycle)
 .zz_cycles_basis <- function(Mat, col_keys) {
 
   nc <- length(col_keys)
   if (nc == 0) return(list())
-  if (is.null(Mat) || nrow(as.matrix(Mat)) == 0) {
-    # zero map: every basis column is already a cycle
-    return(lapply(seq_len(nc), function(j) setNames(1, col_keys[j])))
-  }
-  Md <- as.matrix(Mat)
-  rr <- .zz_gauss_jordan_eliminate(Md)
-  piv <- rr$pivots; R <- rr$R
-  free <- setdiff(seq_len(nc), piv)
-  lapply(free, function(fcol) {
-    v <- numeric(nc)
-    v[fcol] <- 1
-    for (r in seq_along(piv)) v[piv[r]] <- -R[r, fcol]
-    names(v) <- col_keys
+  Md <- if (is.null(Mat)) matrix(0, nrow = 0, ncol = nc) else as.matrix(Mat)
+  Z <- ker(Md)
+  if (ncol(Z) == 0) return(list())
+  lapply(seq_len(ncol(Z)), function(j) {
+    v <- Z[, j]; names(v) <- col_keys
     v[abs(v) > 1e-8]
   })
 }
 
-#' Extend B_basis to a basis of span(Z_basis); returns the added (complement) vectors
-#' @keywords internal
-#' Example (continuing the cycle from .zz_cycles_basis, no boundaries yet):
-#'   Zp <- list(c("1-2" = 1, "1-3" = -1, "2-3" = 1))
-#'   .zz_homology_basis(Z_basis = Zp, B_basis = list())
-#'   #> [[1]]
-#'   #> 1-2 1-3 2-3
-#'   #>   1  -1   1
-#'   # (nothing to cancel it against, so the cycle itself represents H1)
+# Extend B_basis to a basis of span(Z_basis); returns the added (complement) vectors
+# Example (continuing the cycle from .zz_cycles_basis, no boundaries yet):
+#   Zp <- list(c("1-2" = 1, "1-3" = -1, "2-3" = 1))
+#   .zz_homology_basis(Z_basis = Zp, B_basis = list())
+#   #> [[1]]
+#   #> 1-2 1-3 2-3
+#   #>   1  -1   1
+#   # (nothing to cancel it against, so the cycle itself represents H1)
 .zz_homology_basis <- function(Z_basis, B_basis) {
 
   if (length(Z_basis) == 0) return(list())
   keys <- unique(c(.zz_chain_keys_union(B_basis), .zz_chain_keys_union(Z_basis)))
-  current <- if (length(B_basis) > 0) .zz_chains_to_matrix(B_basis, keys) else matrix(0, nrow = length(keys), ncol = 0)
-  r_now <- .zz_matrix_rank(current)
-  complement <- list()
-
-  for (z in Z_basis) {
-    zc <- .zz_chains_to_matrix(list(z), keys)
-    test <- cbind(current, zc)
-    r_new <- .zz_matrix_rank(test)
-    if (r_new > r_now) {
-      complement[[length(complement) + 1]] <- z
-      current <- test
-      r_now <- r_new
-    }
-  }
-  complement
+  Zmat <- .zz_chains_to_matrix(Z_basis, keys)
+  Bmat <- if (length(B_basis) > 0) .zz_chains_to_matrix(B_basis, keys) else matrix(0, nrow = length(keys), ncol = 0)
+  H <- homology(Zmat, Bmat, tol = NULL)
+  if (ncol(H) == 0) return(list())
+  lapply(seq_len(ncol(H)), function(j) {
+    v <- H[, j]; names(v) <- keys
+    v[abs(v) > 1e-8]
+  })
 }
 
-#' @keywords internal
-#' Example:
-#'   .zz_make_generator(c("1-2" = 1, "1-3" = -1, "2-3" = 1), birth = 0, id = 1)
-#'   #> $vec
-#'   #> 1-2 1-3 2-3
-#'   #>   1  -1   1
-#'   #> $birth
-#'   #> [1] 0
-#'   #> $id
-#'   #> [1] 1
+# Example:
+#   .zz_make_generator(c("1-2" = 1, "1-3" = -1, "2-3" = 1), birth = 0, id = 1)
+#   #> $vec
+#   #> 1-2 1-3 2-3
+#   #>   1  -1   1
+#   #> $birth
+#   #> [1] 0
+#   #> $id
+#   #> [1] 1
 .zz_make_generator <- function(vec, birth, id) list(vec = vec, birth = birth, id = id)
 
-#' Initialize the representative-cycle basis (actives) for every dimension of a complex
-#' @keywords internal
-#' Example (hollow triangle K0 = edges 1-2, 1-3, 2-3; one component, one loop):
-#'   .zz_init_generators(list(c(1, 2), c(1, 3), c(2, 3)), birth_index = 0)
-#'   #> $`0`: one generator, vec = c("1" = 1), birth = 0 (H0 = 1 component)
-#'   #> $`1`: one generator, vec = c("1-2"=1,"1-3"=-1,"2-3"=1), birth = 0  (H1 = 1 loop)
-#'   #> attr(, "next_id"): 3
+# Initialize the representative-cycle basis (actives) for every dimension of a complex
+# Example (hollow triangle K0 = edges 1-2, 1-3, 2-3; one component, one loop):
+#   .zz_init_generators(list(c(1, 2), c(1, 3), c(2, 3)), birth_index = 0)
+#   #> $`0`: one generator, vec = c("1" = 1), birth = 0 (H0 = 1 component)
+#   #> $`1`: one generator, vec = c("1-2"=1,"1-3"=-1,"2-3"=1), birth = 0  (H1 = 1 loop)
+#   #> attr(, "next_id"): 3
 .zz_init_generators <- function(complex, birth_index) {
 
   actives <- list()
@@ -277,9 +208,12 @@
   next_id <- 1
 
   for (p in 0:max_dim) {
+
     p_faces <- faces(complex, p)
+
     if (length(p_faces) == 0) next
     p_keys <- .zz_simplex_keys(p_faces)
+
     Zp <- if (p == 0) {
       lapply(p_keys, function(k) setNames(1, k))
     } else {
@@ -300,18 +234,16 @@
   actives
 }
 
-#' Insert a single new simplex sx into the tracked zigzag state; may record a death (dim q-1)
-#' or a birth (dim q). Mutates and returns the state list.
-#' @keywords internal
-#' Example (inserting the 2-simplex 1-2-3 into the hollow triangle above fills
-#' the hole, so the H1 generator from .zz_init_generators dies immediately):
-#'   state <- list(complex = list(c(1,2), c(1,3), c(2,3)), actives = init,
-#'                 bars = list(), next_id = 3, from = 0L, to = 1L)
-#'   state2 <- .zz_insert_simplex(state, c(1, 2, 3))
-#'   state2$bars
-#'   #> [[1]] list(dim = 1, birth = 0, death = 0)
-#'   state2$actives[["1"]]
-#'   #> list()   (no H1 generator survives - the loop was just filled in)
+# Insert a single new simplex sx into the tracked zigzag state; may record a death (dim q-1)
+# or a birth (dim q). Mutates and returns the state list.
+# Example (inserting the 2-simplex 1-2-3 into the hollow triangle above fills
+# the hole, so the H1 generator from .zz_init_generators dies immediately):
+#   state <- list(complex = list(c(1,2), c(1,3), c(2,3)), actives = init, bars = list(), next_id = 3, from = 0L, to = 1L)
+#   state2 <- .zz_insert_simplex(state, c(1, 2, 3))
+#   state2$bars
+#   #> [[1]] list(dim = 1, birth = 0, death = 0)
+#   state2$actives[["1"]]
+#   #> list()   (no H1 generator survives - the loop was just filled in)
 .zz_insert_simplex <- function(state, sx) {
 
   q <- length(sx) - 1
@@ -342,19 +274,23 @@
     state$next_id <- state$next_id + 1
     key_p <- as.character(q)
     state$actives[[key_p]] <- c(state$actives[[key_p]], list(gen))
+
   } else {
     # dsx is a genuinely new element of B_{q-1}: it must kill an existing (q-1) class
     key_pm1 <- as.character(q - 1)
     actives_qm1 <- state$actives[[key_pm1]]
     gens_for_solve <- c(old_q_boundaries, lapply(actives_qm1, `[[`, "vec"))
     sol2 <- .zz_solve_linear_combination(dsx, gens_for_solve)
+
     if (is.null(sol2)) stop("zigzag internal error: boundary of inserted simplex not in Z_{q-1}; invariant broken.")
+
     m <- length(old_q_boundaries)
     active_coeffs <- if (length(actives_qm1) > 0) sol2[(m + 1):length(sol2)] else numeric(0)
     involved <- which(abs(active_coeffs) > 1e-8)
+
     if (length(involved) == 0) stop("zigzag internal error: expected an active generator to die but found none.")
-    ord <- involved[order(-sapply(actives_qm1[involved], `[[`, "birth"),
-                           -sapply(actives_qm1[involved], `[[`, "id"))]
+
+    ord <- involved[order(-sapply(actives_qm1[involved], `[[`, "birth"), -sapply(actives_qm1[involved], `[[`, "id"))]
     lambda <- ord[1]
     died <- actives_qm1[[lambda]]
     state$bars[[length(state$bars) + 1]] <- list(dim = q - 1, birth = died$birth, death = state$from)
@@ -363,18 +299,16 @@
   state
 }
 
-#' Delete a single (currently maximal) simplex sx from the tracked zigzag state; may record
-#' a death (dim q) or a birth (dim q-1). Mutates and returns the state list.
-#' @keywords internal
-#' Example (deleting edge 2-3 from the hollow triangle breaks the loop into a
-#' path, so the H1 generator dies too - just via a different mechanism):
-#'   state <- list(complex = list(c(1,2), c(1,3), c(2,3)), actives = init,
-#'                 bars = list(), next_id = 3, from = 1L, to = 2L)
-#'   state4 <- .zz_delete_simplex(state, c(2, 3))
-#'   state4$bars
-#'   #> [[1]] list(dim = 1, birth = 0, death = 1)
-#'   state4$complex
-#'   #> list(c(1,2), c(1,3))   (edge 2-3 removed)
+# Delete a single (currently maximal) simplex sx from the tracked zigzag state; may record
+# a death (dim q) or a birth (dim q-1). Mutates and returns the state list.
+# Example (deleting edge 2-3 from the hollow triangle breaks the loop into a
+# path, so the H1 generator dies too - just via a different mechanism):
+#   state <- list(complex = list(c(1,2), c(1,3), c(2,3)), actives = init, bars = list(), next_id = 3, from = 1L, to = 2L)
+#   state4 <- .zz_delete_simplex(state, c(2, 3))
+#   state4$bars
+#   #> [[1]] list(dim = 1, birth = 0, death = 1)
+#   state4$complex
+#   #> list(c(1,2), c(1,3))   (edge 2-3 removed)
 .zz_delete_simplex <- function(state, sx) {
 
   q <- length(sx) - 1
@@ -383,17 +317,20 @@
   # dim q: does removing sx force an active q-generator to disappear?
   key_p <- as.character(q)
   actives_q <- state$actives[[key_p]]
+
   if (length(actives_q) > 0) {
     coeffs <- sapply(actives_q, function(g) {
       v <- g$vec
       if (key_sx %in% names(v)) v[[key_sx]] else 0
     })
     S <- which(abs(coeffs) > 1e-8)
+
     if (length(S) > 0) {
       ord <- S[order(-sapply(actives_q[S], `[[`, "birth"), -sapply(actives_q[S], `[[`, "id"))]
       lambda <- ord[1]
       died <- actives_q[[lambda]]
       state$bars[[length(state$bars) + 1]] <- list(dim = q, birth = died$birth, death = state$from)
+
       for (k in S) {
         if (k == lambda) next
         ratio <- coeffs[k] / coeffs[lambda]
@@ -406,10 +343,12 @@
 
   # dim q-1: was sx essential to B_{q-1} (i.e. does removing it shrink the boundary space)?
   if (q >= 1) {
+
     other_q <- Filter(function(s) .zz_simplex_key(s) != key_sx, faces(state$complex, q))
     dsx <- .zz_simplex_boundary(sx)
     other_boundaries <- lapply(other_q, .zz_simplex_boundary)
     sol <- .zz_solve_linear_combination(dsx, other_boundaries)
+
     if (is.null(sol)) {
       # sx's boundary was independent: removing it frees a new (q-1) class
       key_pm1 <- as.character(q - 1)
@@ -452,17 +391,6 @@
 #'   on a purely-growing filtration the two agree after \code{death_here = death_there - 1}.
 #'
 #' @export
-#' @examples
-#' # The K0..K4 triangle example: a hollow triangle whose 2-face is filled in and
-#' # removed again, then broken by deleting an edge.
-#' tri_edges <- list(c(1, 2), c(1, 3), c(2, 3))
-#' K0 <- tri_edges
-#' K1 <- c(tri_edges, list(c(1, 2, 3)))
-#' K2 <- tri_edges
-#' K3 <- c(tri_edges, list(4))
-#' K4 <- list(c(1, 2), c(1, 3), 4)
-#' bars <- zigzag_persistence(list(K0, K1, K2, K3, K4))
-#' bars[bars$dim == 1, ]
 zigzag_persistence <- function(complexes, max_dimension = NULL) {
 
   if (length(complexes) < 2) stop("complexes must have at least two complexes (K0 and K1).")

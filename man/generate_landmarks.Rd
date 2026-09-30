@@ -11,22 +11,13 @@ generate_landmarks(points, n_lms, start_idx = 1)
 
 \item{n_lms}{Number of landmarks to sample (<= N).}
 
-\item{start_idx}{Index of the starting point. Defaults to 1
-(flooder defaults to index 0, i.e. the same first point).}
+\item{start_idx}{Index of the starting point. Defaults to 1 (flooder defaults to index 0, i.e. the same first point).}
 }
 \value{
-A list with \code{landmarks} (n_lms x d matrix) and
-  \code{indices} (row indices into \code{points}).
+A list with \code{landmarks} (n_lms x d matrix) and \code{indices} (row indices into \code{points}).
 }
 \description{
-Selects \code{n_lms} landmarks from a point cloud via (exact) Farthest-Point
-Sampling. Equivalent to \code{flooder::generate_landmarks} (which uses an
-approximate bucket-FPS; the exact version below gives the same qualitative
-coverage).
-}
-\examples{
-\dontrun{
-pts <- matrix(rnorm(2000), ncol = 2)
-lms <- generate_landmarks(pts, 50)
-}
+Selects \code{n_lms} landmarks from a point cloud via (exact) Farthest-Point Sampling.
+Equivalent to \code{flooder::generate_landmarks} (which uses an approximate bucket-FPS;
+the exact version below gives the same qualitative coverage).
 }

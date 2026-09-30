@@ -14,7 +14,6 @@
 #' constructs the 1-skeleton (edges only) and then uses maximal cliques in that
 #' graph as the maximal simplices.
 #'
-#' @importFrom igraph graph.empty add_edges max_cliques
 #' @export
 #' @examples
 #' points <- matrix(c(0, 1, 1, 0, 0, 0, 1, 1), ncol = 2)
@@ -25,18 +24,18 @@ VietorisRipsComplex <- function(points, epsilon) {
   labels <- 1:nrow(points)
 
   # Init graph (k-skeleton)
-  network <- graph.empty(n = length(labels), directed = FALSE)
+  network <- igraph::make_empty_graph(n = length(labels), directed = FALSE)
 
   for (i in 1:(length(labels) - 1)) {
     for (j in (i + 1):length(labels)) {
       dist <- sqrt(sum((points[i, ] - points[j, ])^2))
       if (dist <= epsilon) {
         # Add edge
-        network <- add_edges(network, c(i, j))
+        network <- igraph::add_edges(network, c(i, j))
       }
     }
   }
-  cliques <- max_cliques(network)
+  cliques <- igraph::max_cliques(network)
   simplices <- lapply(cliques, function(clique) {
     simplex <- sort(clique)
     return(as.vector(simplex))

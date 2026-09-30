@@ -9,28 +9,18 @@ simplices_to_filtration(maximal_simplices, scale_fn, max_dimension = NULL)
 \arguments{
 \item{maximal_simplices}{A list of integer vectors (the maximal simplices).}
 
-\item{scale_fn}{A function taking one simplex (integer vector) and
-returning its filtration time.}
+\item{scale_fn}{A function taking one simplex (integer vector) and returning its filtration time.}
 
-\item{max_dimension}{Optional integer cap. If supplied, faces of dimension
-greater than \code{max_dimension} are never generated in the first
-place - this is a structural cap on \code{kmax}, evaluated BEFORE
-\code{\link{faces}} is called, not a post-hoc filter. Callers that need
-the persistence "+1 trick" (see \code{\link{restrict_filtration}}) are
-responsible for passing \code{max_dimension + 1} here, not
-\code{max_dimension} itself - this function does not know about that
-convention.}
+\item{max_dimension}{Optional integer cap. If supplied, faces of dimension greater than \code{max_dimension} are never generated in the first
+place - this is a structural cap on \code{kmax}, evaluated BEFORE \code{\link{faces}} is called, not a post-hoc filter. Callers that need
+the persistence "+1 trick" (see \code{\link{restrict_filtration}}) are responsible for passing \code{max_dimension + 1} here, not
+\code{max_dimension} itself - this function does not know about that convention.}
 }
 \value{
-A filtration list: one \code{list(simplex = <integer vector>, t =
-  <numeric>)} per face, sorted by (t, dimension, lexicographic order).
+A filtration list: one \code{list(simplex, t)} per face, sorted by (t, dimension, lexicographic order).
 }
 \description{
-Shared filtration-assembly step used by every \code{build_filtration()}
-method: take a set of maximal simplices, generate every face of every
-dimension via \code{\link{faces}}, assign each face a filtration time via
-\code{scale_fn}, and sort by (time, dimension, lexicographic order) - the
-same convention used throughout the package (see \code{\link{faces}} for
-what "lexicographic order" means here).
+Shared filtration-assembly step used by every \code{build_filtration()} method: take a set of maximal simplices, generate every face of every
+dimension via \code{\link{faces}}, assign each face a filtration time via \code{scale_fn}, and sort by (time, dimension, lexicographic order).
 }
 \keyword{internal}

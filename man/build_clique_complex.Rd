@@ -9,18 +9,14 @@ build_clique_complex(n, edges)
 \arguments{
 \item{n}{Number of vertices.}
 
-\item{edges}{An integer matrix with two columns (or a length-\code{2k}
-vector, igraph style), one row per edge, 1-based vertex indices.}
+\item{edges}{An integer matrix with two columns (or a length-\code{2k} vector, igraph style), one row per edge, 1-based vertex indices.}
 }
 \value{
-A list with \code{network} (an \code{igraph} object, the
-  1-skeleton) and \code{simplices} (a list of integer vectors, the
+A list with \code{network} (an \code{igraph} object, the 1-skeleton) and \code{simplices} (a list of integer vectors, the
   vertex sets of the maximal cliques, each sorted).
 }
 \description{
-Shared by \code{\link{VietorisRipsComplex}}, \code{\link{CechComplex}} and
-\code{\link{WitnessComplex}}: each of them reduces to "connect vertices
-that are close enough (in whatever sense that complex uses), then take the
-maximal cliques of that graph as the maximal simplices."
+Shared by \code{\link{VietorisRipsComplex}}, \code{\link{CechComplex}} and \code{\link{WitnessComplex}}: each of them reduces to "connect vertices
+that are close enough (in whatever sense that complex uses), then take the maximal cliques of that graph as the maximal simplices."
 }
 \keyword{internal}

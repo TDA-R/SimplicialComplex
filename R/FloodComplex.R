@@ -1,4 +1,3 @@
-# ---------------------------------------------------------------------------
 # Flood Complex for the SimplicialComplex package
 #
 # Pure-R re-implementation of the "flooder" Python package:
@@ -9,39 +8,25 @@
 # Pipeline:
 #   1. Select landmarks via Farthest-Point Sampling (FPS).
 #   2. Build the Delaunay triangulation on the landmarks (geometry::delaunayn).
-#   3. For every top-dimensional Delaunay simplex, place a barycentric grid of
-#      sample points on it. The filtration value ("flood time") of a simplex is
-#      the covering radius: the maximum, over its grid points, of the distance
-#      to the nearest witness point. Faces inherit their values from the grid
-#      points that lie on them.
+#   3. For every top-dimensional Delaunay simplex, place a barycentric grid of sample points on it.
+#      The filtration value ("flood time") of a simplex is the covering radius: the maximum, over its grid points, of the distance
+#      to the nearest witness point. Faces inherit their values from the grid points that lie on them.
 #   4. Make the filtration non-decreasing, then compute persistent homology.
-#
-# Dependencies:
-#   geometry (Delaunay), RANN (kd-tree NN queries)
-#   Optional: torch (GPU acceleration of the distance computation)
-# ---------------------------------------------------------------------------
 
 #' Farthest-Point Sampling of landmarks
 #'
-#' Selects \code{n_lms} landmarks from a point cloud via (exact) Farthest-Point
-#' Sampling. Equivalent to \code{flooder::generate_landmarks} (which uses an
-#' approximate bucket-FPS; the exact version below gives the same qualitative
-#' coverage).
+#' Selects \code{n_lms} landmarks from a point cloud via (exact) Farthest-Point Sampling.
+#' Equivalent to \code{flooder::generate_landmarks} (which uses an approximate bucket-FPS;
+#' the exact version below gives the same qualitative coverage).
 #'
 #' @param points A numeric matrix (N x d) point cloud.
 #' @param n_lms Number of landmarks to sample (<= N).
-#' @param start_idx Index of the starting point. Defaults to 1
-#'   (flooder defaults to index 0, i.e. the same first point).
-#' @return A list with \code{landmarks} (n_lms x d matrix) and
-#'   \code{indices} (row indices into \code{points}).
+#' @param start_idx Index of the starting point. Defaults to 1 (flooder defaults to index 0, i.e. the same first point).
+#' @return A list with \code{landmarks} (n_lms x d matrix) and \code{indices} (row indices into \code{points}).
 #'
 #' @export
-#' @examples
-#' \dontrun{
-#' pts <- matrix(rnorm(2000), ncol = 2)
-#' lms <- generate_landmarks(pts, 50)
-#' }
 generate_landmarks <- function(points, n_lms, start_idx = 1) {
+
   points <- as.matrix(points)
   n <- nrow(points)
   if (n_lms <= 0) stop("Number of landmarks must be positive")
@@ -61,10 +46,9 @@ generate_landmarks <- function(points, n_lms, start_idx = 1) {
   list(landmarks = points[idx, , drop = FALSE], indices = idx)
 }
 
-#' @keywords internal
-#' Barycentric grid on the unit simplex (replicates flooder's generate_grid).
-#' Returns the weight matrix (C x (dim+1)) plus, for every face of the
-#' standard simplex, which local vertices span it and which grid rows lie on it.
+# Barycentric grid on the unit simplex (replicates flooder's generate_grid).
+# Returns the weight matrix (C x (dim+1)) plus, for every face of the
+# standard simplex, which local vertices span it and which grid rows lie on it.
 .flood_grid <- function(n, dim) {
   # all non-negative integer vectors of length dim+1 summing to n-1
   if (dim == 0) {
@@ -79,6 +63,7 @@ generate_landmarks <- function(points, n_lms, start_idx = 1) {
   face_rows <- list() # rows of the grid lying on each face
   face_vertices <- list() # local vertex indices (1-based) spanning each face
   m <- 0
+
   for (k in 0:dim) { # k = number of barycentric coordinates forced to zero
     zero_sets <- utils::combn(seq_len(dim + 1), k, simplify = FALSE)
     if (k == 0) zero_sets <- list(integer(0))
@@ -96,10 +81,10 @@ generate_landmarks <- function(points, n_lms, start_idx = 1) {
   list(weights = weights, face_rows = face_rows, face_vertices = face_vertices)
 }
 
-#' @keywords internal
-#' Nearest-neighbour distances, CPU backend (kd-tree via RANN, with a
-#' base-R brute-force fallback when RANN is not installed).
+# Nearest-neighbour distances, CPU backend (kd-tree via RANN, with a
+# base-R brute-force fallback when RANN is not installed).
 .flood_nn_cpu <- function(points, queries) {
+
   if (requireNamespace("RANN", quietly = TRUE)) {
     RANN::nn2(data = points, query = queries, k = 1)$nn.dists[, 1]
   } else {
@@ -107,12 +92,13 @@ generate_landmarks <- function(points, n_lms, start_idx = 1) {
   }
 }
 
-#' @keywords internal
-#' Chunked brute-force nearest-neighbour distances in base R.
+# Chunked brute-force nearest-neighbour distances in base R.
 .flood_nn_base <- function(points, queries, chunk = 2048L) {
+
   pt2 <- rowSums(points^2)
   nq <- nrow(queries)
   out <- numeric(nq)
+
   for (s in seq(1L, nq, by = chunk)) {
     e <- min(nq, s + chunk - 1L)
     Q <- queries[s:e, , drop = FALSE]
@@ -123,17 +109,16 @@ generate_landmarks <- function(points, n_lms, start_idx = 1) {
   out
 }
 
-#' @keywords internal
-#' Nearest-neighbour distances, torch backend (GPU if CUDA is available).
-#' Brute-force cdist in chunks; mirrors flooder's non-Triton CUDA path.
+# Nearest-neighbour distances, torch backend (GPU if CUDA is available).
+# Brute-force cdist in chunks; mirrors flooder's non-Triton CUDA path.
 .flood_nn_torch <- function(points_t, queries, device, chunk = 4096L) {
+
   q <- torch::torch_tensor(queries, dtype = torch::torch_float32(), device = device)
   nq <- nrow(queries)
   out <- numeric(nq)
   for (s in seq(1L, nq, by = chunk)) {
     e <- min(nq, s + chunk - 1L)
-    idx <- torch::torch_tensor(as.integer(s:e), dtype = torch::torch_long(),
-                               device = device)
+    idx <- torch::torch_tensor(as.integer(s:e), dtype = torch::torch_long(), device = device)
     d <- torch::torch_cdist(q$index_select(1L, idx), points_t)
     out[s:e] <- as.numeric(torch::torch_min(d, dim = 2L)[[1]]$cpu())
   }
@@ -160,18 +145,10 @@ generate_landmarks <- function(points, n_lms, start_idx = 1) {
 #'   \code{landmarks} (matrix), \code{landmark_indices} (or NULL).
 #'
 #' @export
-#' @examples
-#' \dontrun{
-#' pts <- matrix(rnorm(3000), ncol = 2)
-#' fc <- flood_complex(pts, landmarks = 40)
-#' }
-flood_complex <- function(points,
-                          landmarks,
-                          max_dimension = NULL,
-                          points_per_edge = 30,
-                          backend = c("auto", "cpu", "torch"),
-                          batch_points = 2^22,
-                          delaunay = NULL) {
+flood_complex <- function(
+    points, landmarks, max_dimension = NULL, points_per_edge = 30,
+    backend = c("auto", "cpu", "torch"), batch_points = 2^22, delaunay = NULL) {
+
   backend <- match.arg(backend)
   points <- as.matrix(points)
   d_amb <- ncol(points)
@@ -190,17 +167,13 @@ flood_complex <- function(points,
   # backend selection
   use_torch <- FALSE
   device <- NULL
-  if (backend == "torch" ||
-      (backend == "auto" &&
-       requireNamespace("torch", quietly = TRUE) &&
-       torch::cuda_is_available())) {
+  if (backend == "torch" || (backend == "auto" && requireNamespace("torch", quietly = TRUE) && torch::cuda_is_available())) {
     if (!requireNamespace("torch", quietly = TRUE)) {
       stop("backend = 'torch' requested but the torch package is not installed")
     }
     use_torch <- TRUE
     device <- if (torch::cuda_is_available()) "cuda" else "cpu"
-    points_t <- torch::torch_tensor(points, dtype = torch::torch_float32(),
-                                    device = device)
+    points_t <- torch::torch_tensor(points, dtype = torch::torch_float32(), device = device)
   }
 
   # Delaunay triangulation on the landmarks
@@ -231,6 +204,7 @@ flood_complex <- function(points,
   batch_size <- max(1L, as.integer(batch_points / C))
 
   for (s0 in seq(1L, m, by = batch_size)) {
+
     s1 <- min(m, s0 + batch_size - 1L)
     nb <- s1 - s0 + 1L
     Sb <- top[s0:s1, , drop = FALSE]
@@ -241,8 +215,7 @@ flood_complex <- function(points,
       P[((i - 1L) * C + 1L):(i * C), ] <- W %*% landmarks[Sb[i, ], , drop = FALSE]
     }
 
-    dists <- if (use_torch) .flood_nn_torch(points_t, P, device)
-             else .flood_nn_cpu(points, P)
+    dists <- if (use_torch) .flood_nn_torch(points_t, P, device) else .flood_nn_cpu(points, P)
     D <- matrix(dists, nrow = nb, ncol = C, byrow = TRUE)
 
     # covering radius of every face of every simplex in the batch
@@ -253,7 +226,7 @@ flood_complex <- function(points,
         M <- D[, rows, drop = FALSE]
         M[cbind(seq_len(nrow(M)), max.col(M, ties.method = "first"))]
       }
-      faces_b <- Sb[, verts, drop = FALSE]                  # nb x |face|
+      faces_b <- Sb[, verts, drop = FALSE] # nb x |face|
       keys <- apply(faces_b, 1, paste, collapse = " ")
       for (i in seq_len(nb)) assign(keys[i], vals[i], envir = filt)
     }
@@ -269,6 +242,7 @@ flood_complex <- function(points,
   simplices <- simplices[ord]; values <- values[ord]; dims <- dims[ord]
   key_of <- vapply(simplices, paste, "", collapse = " ")
   lookup <- new.env(hash = TRUE, parent = emptyenv())
+
   for (i in seq_along(key_of)) assign(key_of[i], i, envir = lookup)
 
   for (i in seq_along(simplices)) {
@@ -289,13 +263,10 @@ flood_complex <- function(points,
 
 #' Flood filtration in SimplicialComplex format
 #'
-#' Wraps \code{\link{flood_complex}} and returns the filtration in the same
-#' format as \code{\link{build_filtration}}: a list of
-#' \code{list(simplex = <integer vector>, t = <numeric>)}, sorted by
-#' (time, dimension, lexicographic order). The result plugs directly into
-#' \code{boundary_info()} / \code{extract_persistence_pairs()} /
-#' \code{plot_persistence()}, as well as into the faster
-#' \code{\link{flood_persistence}}.
+#' Wraps \code{\link{flood_complex}} and returns the filtration in the same format as \code{\link{build_filtration}}: a list of
+#' \code{list(simplex = <integer vector>, t = <numeric>)}, sorted by (time, dimension, lexicographic order).
+#' The result plugs directly into \code{boundary_info()} / \code{extract_persistence_pairs()} /
+#' \code{plot_persistence()}, as well as into the faster \code{\link{flood_persistence}}.
 #'
 #' @param points A numeric matrix (N x d) point cloud.
 #' @param landmarks Number of FPS landmarks, or an explicit landmark matrix.
@@ -303,12 +274,6 @@ flood_complex <- function(points,
 #' @return A filtration list compatible with \code{boundary_info}.
 #'
 #' @export
-#' @examples
-#' \dontrun{
-#' pts <- matrix(rnorm(2000), ncol = 2)
-#' filtration <- build_flood_filtration(pts, landmarks = 30)
-#' pairs <- flood_persistence(filtration)
-#' }
 build_flood_filtration <- function(points, landmarks, ...) {
   as_filtration(flood_complex(points, landmarks, ...))
 }
@@ -320,8 +285,7 @@ build_flood_filtration <- function(points, landmarks, ...) {
 #'
 #' @export
 as_filtration <- function(fc) {
-  filist <- Map(function(s, t) list(simplex = s, t = t),
-                fc$simplices, fc$filtration)
+  filist <- Map(function(s, t) list(simplex = s, t = t), fc$simplices, fc$filtration)
   ord <- order(vapply(filist, `[[`, 0, "t"),
                lengths(lapply(filist, `[[`, "simplex")),
                vapply(filist, function(x) paste(x$simplex, collapse = "-"), ""))
@@ -334,18 +298,12 @@ as_filtration <- function(fc) {
 #' column-reduction algorithm, but on sparse columns (integer index vectors
 #' over GF(2)) instead of a dense matrix. Produces the same output format as
 #' \code{extract_persistence_pairs(filist, res$last_1, res$pivot_owner)} while
-#' scaling to the much larger complexes produced by
-#' \code{\link{build_flood_filtration}}.
+#' scaling to the much larger complexes produced by \code{\link{build_flood_filtration}}.
 #'
-#' @param filist A filtration list (from \code{build_flood_filtration} or
-#'   \code{build_filtration}).
-#' @param max_dimension Optional maximum homology dimension to report. When
-#'   set, one extra dimension is kept internally so dimension-\code{max_dimension}
-#'   classes still get correct death times from their true killers, and only
-#'   that extra dimension is dropped from the output - see
-#'   \code{\link{restrict_filtration}}'s Details, and
-#'   \code{\link{persistence_pairs}} which applies the same correction.
-#'   Leave \code{NULL} (default) to report every dimension present.
+#' @param filist A filtration list (from \code{build_flood_filtration} or \code{build_filtration}).
+#' @param max_dimension Optional maximum homology dimension to report. When set, one extra dimension is kept internally so dimension-\code{max_dimension}
+#'   classes still get correct death times from their true killers, and only that extra dimension is dropped from the output, see
+#'   \code{\link{restrict_filtration}}'s Details, and \code{\link{persistence_pairs}} which applies the same correction.
 #' @return A data frame with columns \code{dim}, \code{birth}, \code{death}.
 #'
 #' @export
@@ -353,54 +311,23 @@ flood_persistence <- function(filist, max_dimension = NULL) {
   if (!is.null(max_dimension)) {
     filist <- restrict_filtration(filist, max_dimension + 1)
   }
-  n <- length(filist)
-  keys <- vapply(filist, function(x) paste(x$simplex, collapse = " "), "")
-  index <- new.env(hash = TRUE, parent = emptyenv())
-  for (i in seq_len(n)) assign(keys[i], i, envir = index)
-
-  cols <- vector("list", n)
-  for (i in seq_len(n)) {
-    s <- filist[[i]]$simplex
-    if (length(s) == 1L) { cols[[i]] <- integer(0); next }
-    fmat <- utils::combn(s, length(s) - 1L)
-    cols[[i]] <- sort(vapply(seq_len(ncol(fmat)), function(j)
-      get(paste(fmat[, j], collapse = " "), envir = index), 0L))
-  }
-
-  symdiff <- function(a, b) sort.int(c(a[!(a %in% b)], b[!(b %in% a)]))
-
-  pivot_owner <- rep(NA_integer_, n)
-  for (j in seq_len(n)) {
-    col <- cols[[j]]
-    repeat {
-      if (length(col) == 0L) break
-      piv <- col[length(col)]
-      owner <- pivot_owner[piv]
-      if (is.na(owner)) { pivot_owner[piv] <- j; break }
-      col <- symdiff(col, cols[[owner]])
-    }
-    cols[[j]] <- col
-  }
+  red <- .reduce_gf2_boundary(filist)
+  pivot_owner <- red$pivot_owner
+  cols <- red$cols
 
   dims <- lengths(lapply(filist, `[[`, "simplex")) - 1L
   ts <- vapply(filist, `[[`, 0, "t")
 
   killed <- which(!is.na(pivot_owner))
-  pairs <- data.frame(
-    dim = dims[killed],
-    birth = ts[killed],
-    death = ts[pivot_owner[killed]]
-  )
+  pairs <- data.frame(dim = dims[killed], birth = ts[killed], death = ts[pivot_owner[killed]])
   # zero column (positive simplex) that is never paired
   zero_cols <- which(vapply(cols, length, 0L) == 0L)
   essential <- zero_cols[is.na(pivot_owner[zero_cols])]
   if (length(essential)) {
-    pairs <- rbind(pairs, data.frame(
-      dim = dims[essential], birth = ts[essential], death = Inf))
+    pairs <- rbind(pairs, data.frame(dim = dims[essential], birth = ts[essential], death = Inf))
   }
   rownames(pairs) <- NULL
   pairs <- pairs[order(pairs$dim, pairs$birth), ]
-
   if (!is.null(max_dimension)) {
     pairs <- pairs[pairs$dim <= max_dimension, , drop = FALSE]
     rownames(pairs) <- NULL

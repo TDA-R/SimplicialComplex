@@ -17,18 +17,8 @@ build_flood_filtration(points, landmarks, ...)
 A filtration list compatible with \code{boundary_info}.
 }
 \description{
-Wraps \code{\link{flood_complex}} and returns the filtration in the same
-format as \code{\link{build_filtration}}: a list of
-\code{list(simplex = <integer vector>, t = <numeric>)}, sorted by
-(time, dimension, lexicographic order). The result plugs directly into
-\code{boundary_info()} / \code{extract_persistence_pairs()} /
-\code{plot_persistence()}, as well as into the faster
-\code{\link{flood_persistence}}.
-}
-\examples{
-\dontrun{
-pts <- matrix(rnorm(2000), ncol = 2)
-filtration <- build_flood_filtration(pts, landmarks = 30)
-pairs <- flood_persistence(filtration)
-}
+Wraps \code{\link{flood_complex}} and returns the filtration in the same format as \code{\link{build_filtration}}: a list of
+\code{list(simplex = <integer vector>, t = <numeric>)}, sorted by (time, dimension, lexicographic order).
+The result plugs directly into \code{boundary_info()} / \code{extract_persistence_pairs()} /
+\code{plot_persistence()}, as well as into the faster \code{\link{flood_persistence}}.
 }

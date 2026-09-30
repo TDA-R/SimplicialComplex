@@ -299,36 +299,9 @@ persistence_pairs <- function(filist, max_dimension = NULL) {
   if (!is.null(max_dimension)) {
     filist <- restrict_filtration(filist, max_dimension + 1)
   }
-  n <- length(filist)
-  keys <- vapply(filist, function(x) paste(x$simplex, collapse = " "), "")
-  index <- new.env(hash = TRUE, parent = emptyenv())
-  for (i in seq_len(n)) assign(keys[i], i, envir = index)
-
-  # sparse boundary columns: indices of the facets of each simplex
-  cols <- vector("list", n)
-  for (i in seq_len(n)) {
-    s <- filist[[i]]$simplex
-    if (length(s) == 1L) { cols[[i]] <- integer(0); next }
-    fmat <- combn(s, length(s) - 1L)
-    cols[[i]] <- sort(vapply(seq_len(ncol(fmat)), function(j)
-      get(paste(fmat[, j], collapse = " "), envir = index), 0L))
-  }
-
-  # XOR of two sparse GF(2) columns = symmetric difference of index sets
-  symdiff <- function(a, b) sort.int(c(a[!(a %in% b)], b[!(b %in% a)]))
-
-  pivot_owner <- rep(NA_integer_, n)
-  for (j in seq_len(n)) {
-    col <- cols[[j]]
-    repeat {
-      if (length(col) == 0L) break
-      piv <- col[length(col)]           # lowest 1 = last index
-      owner <- pivot_owner[piv]
-      if (is.na(owner)) { pivot_owner[piv] <- j; break }
-      col <- symdiff(col, cols[[owner]])
-    }
-    cols[[j]] <- col
-  }
+  red <- .reduce_gf2_boundary(filist)
+  pivot_owner <- red$pivot_owner
+  cols <- red$cols
 
   dims <- lengths(lapply(filist, `[[`, "simplex")) - 1L
   ts <- vapply(filist, `[[`, 0, "t")

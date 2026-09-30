@@ -1,4 +1,6 @@
-#' Persistent (combinatorial) Laplacian Delta_q^{X,Y}
+#' Persistent (combinatorial) Laplacian
+#'
+#' Computes the persistent Laplacian \eqn{\Delta_q^{X,Y}}{Delta_q^(X,Y)}.
 #'
 #' @param X_simplices,Y_simplices Lists of (maximal) simplices, same format used everywhere else in the package. X must be a subcomplex of Y.
 #' @param q The dimension.
@@ -61,7 +63,7 @@ persistent_laplacian <- function(X_simplices, Y_simplices, q) {
     } else {
       # filter
       D_extra  <- D[extra, , drop = FALSE] # get the coef: -1 1
-      basis_C  <- Null(t(D_extra)) # find the vertor ortho with this vec: 0.7071068 0.7071068
+      basis_C  <- MASS::Null(t(D_extra)) # find the vertor ortho with this vec: 0.7071068 0.7071068
     }
 
     dim_C <- ncol(basis_C)
@@ -91,7 +93,9 @@ persistent_laplacian <- function(X_simplices, Y_simplices, q) {
 # "Simplicial Attention Networks" This is the single-complex case:
 # B_k and B_{k+1} both come from the SAME complex K, just two neighbouring dimensions of it - there is no X/Y split here.
 #'
-#' Ordinary Hodge Laplacian L_k(K) = B_k^T B_k + B_{k+1} B_{k+1}^T
+#' Ordinary Hodge Laplacian
+#'
+#' Computes \eqn{L_k(K) = B_k^T B_k + B_{k+1} B_{k+1}^T}{L_k(K) = B_k^T B_k + B_(k+1) B_(k+1)^T}.
 #'
 #' @param K_simplices A single complex (list of maximal simplices).
 #' @param k The dimension.
@@ -129,10 +133,10 @@ hodge_laplacian <- function(K_simplices, k) {
 }
 
 
-# Basic graph Laplacian  L = D - A
-#
-# The classical graph-theory Laplacian - degree matrix minus adjacency
-# matrix - built directly from a complex's 1-skeleton (vertices + edges).
+#' Basic graph Laplacian  L = D - A
+#'
+#' The classical graph-theory Laplacian - degree matrix minus adjacency
+#' matrix - built directly from a complex's 1-skeleton (vertices + edges).
 #'
 #' @param simplices A list of simplices; only the 0-simplices (vertices) and 1-simplices (edges) are used.
 #' @return A list with the Laplacian L, the degree matrix D, the adjacency
